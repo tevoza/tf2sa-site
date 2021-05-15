@@ -33,7 +33,7 @@ class dataAccess
 }
 
     public function printTable($res){
-        echo "<table style='width:50%'>";
+        echo "<table style='width:70%'>";
         echo "<tr style='color:white; text-align: left;'>";
         echo "<th>Rank</th>";
         //Print headers.

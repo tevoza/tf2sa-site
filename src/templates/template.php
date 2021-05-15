@@ -39,7 +39,7 @@ class Template
       echo'
       <div id="header">
          <div id="icon">
-            <img src="'.$ASSET_DIR.'/tf2sa.webp" width="90px" height="90px">
+            <img src="'.$ASSET_DIR.'/tf2sa.png" width="90px" height="90px">
          </div>
 
          <div id="title" style="color:#52FFB8">

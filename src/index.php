@@ -12,15 +12,17 @@ $template->printHead();
 <?php $template->printHeader(BASE_DIR); ?>
 <div id="content-wrap">
 
-<p>
+<div id="info">
 Welcome to TF2A. The home of local South African pugs.
-We host 3 servers
- <ul>
-  <li>Coffee</li><br>
-  <li>Tea</li><br>
-  <li>Milk</li><br>
-</ul>
-</p>
+We host 3 servers: <br>
+<ol>
+    <li> TF2SA Pug </t> 129.232.150.23:27016  </li> <br>
+    <li> TF2SA MGE  129.232.150.23:27016  </li> <br>
+    <li> TF2SA Jump (All Maps) | tempus.tf  129.232.150.23:27016 </li> <br>
+</ol>
+</div>
+<div id="report">
+</div>
 
 </div>
 <footer id="footer">tf2sa</footer>

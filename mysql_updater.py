@@ -17,6 +17,7 @@ CLASS_ID = {
 }
 
 SPECIAL_CLASS = {2,4,8,9}
+DMG_THRESH = 17000 #ignore games where damage above this was obtained.
 
 def DBInit(cursor):
     print("confirming/recreating tables... ", end='')
@@ -104,7 +105,7 @@ def isValidLog(LogID, Log, cursor):
     if LogExists:
         print ("Log already recorded. ", end='')
         return False
-    elif (Log["length"] / 60) < 12:
+    elif (Log["length"] / 60) < 15:
         print("Match " + str(LogID) + " not long enough to be recorded. ", end='')
         return False
 
@@ -138,9 +139,15 @@ def AddGame(LogID, Log, cursor):
 
     global CLASS_ID
     global SPECIAL_CLASS
+    global DMG_THRESH
     for Player,PlayerStats in Log["players"].items():
         SpecialClass = False
         PlayerID = SteamID(Player).as_64
+        Damage = PlayerStats["dmg"]
+        if Damage > DMG_THRESH:
+            cursor.execute("DELETE FROM PlayerStats WHERE GameID={}".format(LogID))
+            print("damage threshold exceeded. disregarding game.")
+            break;
 
         for Class_stats in PlayerStats["class_stats"]:
             if Class_stats["type"] not in CLASS_ID:
@@ -228,8 +235,6 @@ if __name__ == "__main__":
 
     #Add each Log record
     for idx, LogID in enumerate(LogsList, start=1):
-        if idx == 10:
-            break
 
         print("Updating log (" + str(idx) + "/" + str(len(LogsList)) + ") - " + str(LogID) + '... ', end='')
         Log = json.loads(requests.get("http://logs.tf/api/v1/log/{}".format(LogID)).text)

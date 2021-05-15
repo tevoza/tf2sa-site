@@ -24,6 +24,8 @@ body {
   padding-bottom: 2.5rem;    /* Footer height */
   margin-left:50px;
   margin-right:50px;
+  display:grid;
+  grid-template-columns: auto 1fr;
 }
 
 #header {
@@ -42,19 +44,19 @@ body {
   text-align:center;
 }
 
-/* navbar stuff */
-ul {
+/*     TOP NAVBAR     */
+#navbar ul {
   list-style-type: none;
   margin: 0;
   padding: 0;
   overflow: hidden;
 }
 
-li {
+#navbar li {
   float: left;
 }
 
-li a {
+#navbar li a {
   display: block;
   color:white;
   text-align: center;
@@ -64,10 +66,37 @@ li a {
 }
 
 /* Change the link color to  on hover */
-li a:hover {
+#navbar li a:hover {
   color: #8EB8E5;
 }
  
 #index #navbar .index, #stats #navbar .stats, #forum #navbar .forum {
+  color:#52FFB8;
+}
+
+/*      SIDEBAR     */
+#side-bar ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  width: 200px;
+}
+
+#side-bar li a {
+  display: block;
+  color: white;
+  padding: 8px 16px;
+  text-decoration: none;
+  font-style:italic;
+}
+
+/* Change the link color on hover */
+#side-bar li a:hover {
+  background-color: #555;
+  color: #8EB8E5;;
+}
+
+
+#damage .damage, #airshots .airshots, #kills .kills, #scout .scout, #soldier .soldier, #demo .demo, #medic .medic{
   color:#52FFB8;
 }
