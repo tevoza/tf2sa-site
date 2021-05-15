@@ -17,7 +17,7 @@ CLASS_ID = {
 }
 
 SPECIAL_CLASS = {2,4,8,9}
-DMG_THRESH = 17000 #ignore games where damage above this was obtained.
+DMG_THRESH = 17500 #ignore games where damage above this was obtained.
 
 def DBInit(cursor):
     print("confirming/recreating tables... ", end='')
