@@ -1,5 +1,6 @@
 import json, requests, mysql.connector
 from steam.steamid import SteamID
+from dotenv import dotenv_values
 #UPDATE GAME STATS FROM LOGSTF
 
 CLASS_ID = {
@@ -101,10 +102,10 @@ def isValidLog(LogID, Log, cursor):
     cursor.execute("SELECT GameID FROM Games WHERE GameID = '{}'".format(LogID))
     LogExists = cursor.fetchone()
     if LogExists:
-        print ("Log already recorded.", end='')
+        print ("Log already recorded. ", end='')
         return False
     elif (Log["length"] / 60) < 12:
-        print("Match " + str(LogID) + " not long enough to be recorded.", end='')
+        print("Match " + str(LogID) + " not long enough to be recorded. ", end='')
         return False
 
     return True
@@ -117,7 +118,8 @@ def AddPlayer(steamid, name, cursor):
     if PlayerExists:
         return
     else:
-        cursor.execute("INSERT INTO Players VALUES ('{}', '{}')".format(steamid, name))
+        qry = "INSERT INTO Players VALUES (%s, %s)"
+        cursor.execute(qry,(steamid, name))
 
 def AddGame(LogID, Log, cursor):
     if isValidLog(LogID, Log, cursor) == False:
@@ -193,32 +195,41 @@ def AddGame(LogID, Log, cursor):
     print("done")
 
 if __name__ == "__main__":
-    db = mysql.connector.connect(
-        host="localhost",
-        user="tf2sa",
-        password="tf2saAdmin",
-        database="tf2sa"
-    )
+    env = dotenv_values(".env")
 
+    db = mysql.connector.connect(
+        host        = "localhost",
+        user        = env['MYSQL_USR'],
+        password    = env['MYSQL_PWD'],
+        database    = env['MYSQL_DB']
+    )
     cursor = db.cursor()
+    cursor.autocommit = True
 
     DBInit(cursor)
 
-    UploaderFile = open("Uploaders.txt", "r")
-    LogsList = []
-    LogCount = 0
+    #get already stored logs
+    cursor.execute("SELECT GameID FROM Games")
+    StoredLogs = [i[0] for i in list(cursor.fetchall())]
+    print(len(StoredLogs), " matches already stored in database.\nFetching Logs...", end="")
 
+    UPLOADERS = env['LOG_UPLOADERS'].split(',')
+    AllLogs = []
     #Generate list of LogIDs
-    for x in UploaderFile:
-        Uploader = x[11:]
-        UploaderLogs = json.loads(requests.get("https://logs.tf/api/v1/log?uploader={}".format(Uploader)).text)
+    for x in UPLOADERS:
+        UploaderLogs = json.loads(requests.get("https://logs.tf/api/v1/log?uploader={}".format(x)).text)
         for x in UploaderLogs["logs"]:
-            LogsList.append(x["id"])
+            AllLogs.append(x["id"])
+
+    print(len(AllLogs), "Total logs")
+
+    LogsList = set(AllLogs).difference(StoredLogs)
+    print(len(LogsList),  "logs to be processed")
 
     #Add each Log record
-    for idx, LogID in enumerate(LogsList):
-        #if idx == 5:
-            #break
+    for idx, LogID in enumerate(LogsList, start=1):
+        if idx == 10:
+            break
 
         print("Updating log (" + str(idx) + "/" + str(len(LogsList)) + ") - " + str(LogID) + '... ', end='')
         Log = json.loads(requests.get("http://logs.tf/api/v1/log/{}".format(LogID)).text)

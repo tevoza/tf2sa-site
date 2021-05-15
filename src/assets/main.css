@@ -1,0 +1,73 @@
+body {
+  background-color: #23272d;
+  color: #ffffff;
+  font: 1.2em / 1.5  sans-serif;
+  padding-bottom: 2.5rem;
+  margin: 0;
+}
+
+#page-container {
+  position: relative;
+  min-height: 100vh;
+
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+
+  width:95%;
+  height: 100%;
+  text-align:left;
+  margin-left:50px;
+  margin-right:50px;
+}
+
+#content-wrap {
+  padding-bottom: 2.5rem;    /* Footer height */
+  margin-left:50px;
+  margin-right:50px;
+}
+
+#header {
+  padding-top: 25px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  text-align:center;
+  color:#33FFA9;
+}
+
+#footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 2.5rem;            /* Footer height */
+  text-align:center;
+}
+
+/* navbar stuff */
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+li {
+  float: left;
+}
+
+li a {
+  display: block;
+  color:white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-style: italic;
+}
+
+/* Change the link color to  on hover */
+li a:hover {
+  color: #8EB8E5;
+}
+ 
+#index #navbar .index, #stats #navbar .stats, #forum #navbar .forum {
+  color:#52FFB8;
+}

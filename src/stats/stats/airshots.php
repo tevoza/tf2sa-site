@@ -1,9 +1,16 @@
+<?php
+define('BASE_DIR',__DIR__.'/../');
+include_once(BASE_DIR.'/vendor/autoload.php');
+include BASE_DIR.'data/dataAccess.php';
+$dotenv = Dotenv\Dotenv::createImmutable(BASE_DIR);
+$dotenv->load();
+?>
 <html lang="en">
 
 <head>
     <meta charset="utf-8">
     <title>TF2SA</title>
-    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href=<?php echo BASE_DIR.'/styles.css'?>>
 </head>
 
 <body>
@@ -13,6 +20,7 @@
     <div>
         <h1 style="float: left;"><img src="../res/tf2sa.jpg" height="70px" width="70px" border="0px"></h1>
         <h1><b> TF2SA Pugs </b></h1>
+<?php echo BASE_DIR.'styles.css'?>
     </div>
 </header>
 
@@ -39,8 +47,10 @@
     </ul>                                           
     </div>
 </header>
+<pre>
 <?php
-include '../data/dataAccess.php';
+var_dump(BASE_DIR);
+var_dump($_ENV);
 $data = new dataAccess();
 $db = $data->getDbCon();
 $q="
@@ -54,6 +64,7 @@ ORDER BY AVG(Airshots) DESC
 $res = mysqli_query($db, $q);
 ?>
 
+</pre>
 <main class="page-body">
 <p>
 <i>The stats displayed here attempts to disregard overall factors which would skew the data.
