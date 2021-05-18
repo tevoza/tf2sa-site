@@ -6,7 +6,7 @@
 
 ### statsupdater
  - add blacklist for invalid games.
- - Add player name tracker
+ - add player name tracker
  
 ### stats
  - 2 week summary server stats
