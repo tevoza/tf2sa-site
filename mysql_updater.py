@@ -94,19 +94,53 @@ def DBInit(cursor):
             ON UPDATE RESTRICT
     ) ENGINE = InnoDB;
     """)
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS BlacklistGames (
+        GameID INT UNSIGNED NOT NULL,
+        Reason VARCHAR(32),
+        PRIMARY KEY (GameID)
+    ) ENGINE = InnoDB;
+    """)
     print("done")
 
 #check if valid for further processing. ie
 #check if already recorded
 #check if valid
+
+def UpdatePlayerNames(cursor):
+    Steam_API_Key = env["STEAM_API_KEY"]
+    cursor.execute("SELECT SteamID from Players")
+    Result = cursor.fetchall()
+    IDList = []
+
+    print("Updating player steam usernames.")
+    
+    for ID in range(0, len(Result)):
+        IDList.append(Result[ID][0])
+
+    PlayerInfo = json.loads(requests.get("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={}&steamids={}".format(Steam_API_Key, IDList)).text)
+
+    UpdatedPlayerInfo = {}
+
+    for Player in PlayerInfo["response"]["players"]:
+        UpdatedPlayerInfo[Player["steamid"]] = Player["personaname"]
+
+    for SteamID, PlayerName in UpdatedPlayerInfo.items():
+        qry = "UPDATE Players SET PlayerName = %s WHERE SteamID = %s"
+        cursor.execute(qry,(PlayerName, SteamID))
+
+    print("done")
+
+def BlackListLog(LogID, reason, cursor):
+    cursor.execute("INSERT INTO BlacklistGames (GameID, Reason) VALUES({},'{}')".format(LogID, reason))
+
+    
+
 def isValidLog(LogID, Log, cursor):
-    cursor.execute("SELECT GameID FROM Games WHERE GameID = '{}'".format(LogID))
-    LogExists = cursor.fetchone()
-    if LogExists:
-        print ("Log already recorded. ", end='')
-        return False
-    elif (Log["length"] / 60) < 15:
+    if (Log["length"] / 60) < 15:
         print("Match " + str(LogID) + " not long enough to be recorded. ", end='')
+        BlackListLog(LogID,"Short length", cursor)
         return False
 
     return True
@@ -147,6 +181,7 @@ def AddGame(LogID, Log, cursor):
         if Damage > DMG_THRESH:
             cursor.execute("DELETE FROM PlayerStats WHERE GameID={}".format(LogID))
             print("damage threshold exceeded. disregarding game.")
+            BlackListLog(LogID,"Damage threshold", cursor)
             break;
 
         for Class_stats in PlayerStats["class_stats"]:
@@ -215,6 +250,11 @@ if __name__ == "__main__":
 
     DBInit(cursor)
 
+    #get blacklisted logs
+    cursor.execute("SELECT GameID FROM BlacklistGames")
+    BlackListedLogs = [i[0] for i in list(cursor.fetchall())]
+    print(str(len(BlackListedLogs)) + " blacklisted matches have been recorded.")
+
     #get already stored logs
     cursor.execute("SELECT GameID FROM Games")
     StoredLogs = [i[0] for i in list(cursor.fetchall())]
@@ -230,7 +270,7 @@ if __name__ == "__main__":
 
     print(len(AllLogs), "Total logs")
 
-    LogsList = set(AllLogs).difference(StoredLogs)
+    LogsList = set(set(AllLogs).difference(StoredLogs)).difference(BlackListedLogs)
     print(len(LogsList),  "logs to be processed")
 
     #Add each Log record
@@ -240,5 +280,6 @@ if __name__ == "__main__":
         Log = json.loads(requests.get("http://logs.tf/api/v1/log/{}".format(LogID)).text)
         AddGame(LogID, Log, cursor)
 
+    UpdatePlayerNames(cursor)
     db.commit()
     db.close()
