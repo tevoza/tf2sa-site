@@ -1,4 +1,4 @@
-import json, requests, mysql.connector
+import json, requests, mysql.connector, emoji
 from steam.steamid import SteamID
 from dotenv import dotenv_values
 #UPDATE GAME STATS FROM LOGSTF
@@ -38,8 +38,9 @@ def DBInit(cursor):
         SteamID BIGINT UNSIGNED NOT NULL,
         PlayerName VARCHAR(32),
         PRIMARY KEY (SteamID)
-    ) ENGINE = InnoDB;
+    ) ENGINE = InnoDB DEFAULT CHARSET=utf8mb4;
     """)
+
 
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS PlayerStats (
@@ -108,27 +109,32 @@ def DBInit(cursor):
 #check if already recorded
 #check if valid
 
+
 def UpdatePlayerNames(cursor):
     Steam_API_Key = env["STEAM_API_KEY"]
     cursor.execute("SELECT SteamID from Players")
-    Result = cursor.fetchall()
+    SteamIDTuple = cursor.fetchall()
     IDList = []
 
     print("Updating player steam usernames.")
-    
-    for ID in range(0, len(Result)):
-        IDList.append(Result[ID][0])
 
-    PlayerInfo = json.loads(requests.get("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={}&steamids={}".format(Steam_API_Key, IDList)).text)
+    for ID in range(0, len(SteamIDTuple)):
+        IDList.append(SteamIDTuple[ID][0])
 
-    UpdatedPlayerInfo = {}
+        if ID == 100 or ID == len(SteamIDTuple):
+            PlayerInfo = json.loads(requests.get("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={}&steamids={}".format(Steam_API_Key, IDList)).text)
 
-    for Player in PlayerInfo["response"]["players"]:
-        UpdatedPlayerInfo[Player["steamid"]] = Player["personaname"]
+            UpdatedPlayerNames = {}
 
-    for SteamID, PlayerName in UpdatedPlayerInfo.items():
-        qry = "UPDATE Players SET PlayerName = %s WHERE SteamID = %s"
-        cursor.execute(qry,(PlayerName, SteamID))
+            for Player in PlayerInfo["response"]["players"]:
+                UpdatedPlayerNames[Player["steamid"]] = Player["personaname"]
+
+            for SteamID, PlayerName in UpdatedPlayerNames.items():
+                qry = "UPDATE Players SET PlayerName = %s WHERE SteamID = %s"
+                cursor.execute(qry,(PlayerName, SteamID))
+
+            IDList = []
+            UpdatedPlayerNames = {}
 
     print("done")
 
@@ -149,7 +155,7 @@ def isValidLog(LogID, Log, cursor):
 #Uses steamid64
 def AddPlayer(steamid, name, cursor):
     cursor.execute("Select SteamID from Players where SteamID = {}".format(steamid))
-    PlayerExists = cursor.fetchone();
+    PlayerExists = cursor.fetchone()
     if PlayerExists:
         return
     else:
@@ -243,12 +249,14 @@ if __name__ == "__main__":
         host        = "localhost",
         user        = env['MYSQL_USR'],
         password    = env['MYSQL_PWD'],
-        database    = env['MYSQL_DB']
+        database    = env['MYSQL_DB'],
     )
     cursor = db.cursor()
     cursor.autocommit = True
 
     DBInit(cursor)
+
+    UpdatePlayerNames(cursor)
 
     #get blacklisted logs
     cursor.execute("SELECT GameID FROM BlacklistGames")
