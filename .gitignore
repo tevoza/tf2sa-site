@@ -18,4 +18,7 @@ composer.phar
 
 /node_modules
 
+**/demos/
+**/maps/
+
 .env

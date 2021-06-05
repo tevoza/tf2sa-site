@@ -1,4 +1,4 @@
-import json, requests, mysql.connector, emoji
+import json, requests, mysql.connector
 from steam.steamid import SteamID
 from dotenv import dotenv_values
 #UPDATE GAME STATS FROM LOGSTF
@@ -22,6 +22,16 @@ DMG_THRESH = 17500 #ignore games where damage above this was obtained.
 def DBInit(cursor):
     print("confirming/recreating tables... ", end='')
 
+    #verify
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS Users(
+        UserID INT UNSIGNED NOT NULL AUTO_INCREMENT,
+        UserName VARCHAR(32) NOT NULL,
+        SteamID VARCHAR(32),
+        PassHash = varchar(32),
+    ) ENGINE = InnoDB DEFAULT CHARSET=utf8mb4;
+    """)
+
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS Games (
         GameID INT UNSIGNED NOT NULL,
@@ -40,7 +50,6 @@ def DBInit(cursor):
         PRIMARY KEY (SteamID)
     ) ENGINE = InnoDB DEFAULT CHARSET=utf8mb4;
     """)
-
 
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS PlayerStats (
@@ -105,11 +114,6 @@ def DBInit(cursor):
     """)
     print("done")
 
-#check if valid for further processing. ie
-#check if already recorded
-#check if valid
-
-
 def UpdatePlayerNames(cursor):
     Steam_API_Key = env["STEAM_API_KEY"]
     cursor.execute("SELECT SteamID from Players")
@@ -121,7 +125,7 @@ def UpdatePlayerNames(cursor):
     for ID in range(0, len(SteamIDTuple)):
         IDList.append(SteamIDTuple[ID][0])
 
-        if ID == 100 or ID == len(SteamIDTuple):
+        if len(IDList) == 100 or ID == len(SteamIDTuple):
             PlayerInfo = json.loads(requests.get("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={}&steamids={}".format(Steam_API_Key, IDList)).text)
 
             UpdatedPlayerNames = {}
@@ -141,8 +145,9 @@ def UpdatePlayerNames(cursor):
 def BlackListLog(LogID, reason, cursor):
     cursor.execute("INSERT INTO BlacklistGames (GameID, Reason) VALUES({},'{}')".format(LogID, reason))
 
-    
-
+#Cheque if valid for further processing. ie
+#Cheque if already recorded
+#Cheque if valid
 def isValidLog(LogID, Log, cursor):
     if (Log["length"] / 60) < 15:
         print("Match " + str(LogID) + " not long enough to be recorded. ", end='')

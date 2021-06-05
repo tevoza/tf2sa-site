@@ -70,7 +70,7 @@ body {
   color: #8EB8E5;
 }
  
-#index #navbar .index, #stats #navbar .stats, #forum #navbar .forum {
+#index #navbar .index, #stats #navbar .stats, #forum #navbar .forum, #rules #navbar .rules, #login #navbar .login, #signup #navbar .signup{
   color:#52FFB8;
 }
 
