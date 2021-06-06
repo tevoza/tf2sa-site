@@ -26,9 +26,12 @@ def DBInit(cursor):
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS Users(
         UserID INT UNSIGNED NOT NULL AUTO_INCREMENT,
+        SteamID BIGINT UNSIGNED,
         UserName VARCHAR(32) NOT NULL,
-        SteamID VARCHAR(32),
-        PassHash = varchar(32),
+        PassHash CHAR(64) NOT NULL,
+        SessionID CHAR(64),
+        JoinDate INT UNSIGNED,
+        PRIMARY KEY(UserID, UserName)
     ) ENGINE = InnoDB DEFAULT CHARSET=utf8mb4;
     """)
 
@@ -288,7 +291,6 @@ if __name__ == "__main__":
 
     #Add each Log record
     for idx, LogID in enumerate(LogsList, start=1):
-
         print("Updating log (" + str(idx) + "/" + str(len(LogsList)) + ") - " + str(LogID) + '... ', end='')
         Log = json.loads(requests.get("http://logs.tf/api/v1/log/{}".format(LogID)).text)
         AddGame(LogID, Log, cursor)

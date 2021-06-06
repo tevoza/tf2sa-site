@@ -12,7 +12,6 @@ class dataAccess
     }
 
     function __destruct(){
-        mysqli_close($this->dbCon);
     }
 
     private function getHtmlRootFolder(string $root = '/var/www/') {

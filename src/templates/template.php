@@ -1,6 +1,6 @@
 <?php
 include_once(BASE_DIR.'vendor/autoload.php'); 
-
+include_once(BASE_DIR.'src/data/dataAccess.php');    
 class Template
 {
    public $WWW;
@@ -30,6 +30,27 @@ class Template
       ';
    }
 
+  public function getName()
+  {
+    session_start();
+    if (array_key_exists('sessionid', $_SESSION))
+    {
+      $data = new dataAccess();
+      $db = $data->getDbCon();
+      //CHECK IF USER EXISTS
+      $q = "SELECT UserName FROM Users 
+      WHERE SessionID = '".$_SESSION['sessionid']."'";
+      $res = mysqli_query($db, $q);
+      $Username = mysqli_fetch_row($res)[0];
+      return "welcome ".$Username;
+      mysqli_close();
+    }
+    else
+    {
+      return "welcome, guest";
+    }
+  }
+
    public function printHeader()
    {
       $ASSET_DIR = $this->WWW.$_ENV['ASSET_DIR'];
@@ -52,13 +73,13 @@ class Template
          </div>
 
          <div id="user" style="color:white">
-            <b> welcome, guest </b> <br>
-            <div id="navbar">
-               <ul>
-                 <li><a class="login" href="'.$LOGIN.'">login</a></li>
-                 <li><a class="signup" href="'.$SIGNUP.'">signup</a></li>
-               </ul> 
-            </div>
+          <div id="navbar">
+            '.$this->getName().'
+            <ul>
+              <li><a class="login" href="'.$LOGIN.'">login</a></li>
+              <li><a class="signup" href="'.$SIGNUP.'">signup</a></li>
+            </ul> 
+          </div>
          </div>
       </div>
 

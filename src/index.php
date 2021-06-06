@@ -21,7 +21,12 @@ We host 3 servers: <br>
     <li> TF2SA Jump (All Maps) | tempus.tf  129.232.150.23:27016 </li> <br>
 </ol>
 </div>
+
 <div id="report">
+<pre>
+<?php 
+?>
+</pre>
 </div>
 
 </div>
