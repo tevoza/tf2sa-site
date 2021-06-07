@@ -31,12 +31,11 @@ $template->printHead();
   $data = new dataAccess();
   $db = $data->getDbCon();
   $q="
-  SELECT Players.PlayerName Player, COUNT(DISTINCT PlayerStats.GameID) Matches, SUM(Airshots) Airshots, ROUND(AVG(Airshots),2) Average
-  FROM PlayerStats, Players, Games
-  WHERE PlayerStats.SteamID=Players.SteamID AND Games.GameID=PlayerStats.GameID AND ClassID = 0 AND Games.Date > ".$cutoff."
-  GROUP BY PlayerStats.SteamID
-  HAVING Matches > 25
-  ORDER BY AVG(Airshots) DESC
+SELECT PlayerName, COUNT(PlayerName) Matches,AVG(DamageTaken) DamageTaken, AVG(HealsReceived) Heals
+FROM PlayerStats ps, Players p
+WHERE ps.SteamID = p.SteamID 
+GROUP BY PlayerName
+ORDER BY Heals DESC
   ";
   $res = mysqli_query($db, $q);
   ?>
