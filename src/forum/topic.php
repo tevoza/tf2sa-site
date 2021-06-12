@@ -20,6 +20,9 @@ $template->printHead();
 $data = new dataAccess();
 $db = $data->getDbCon();
 
+
+
+
 $sql = "SELECT
 			Topic,
             Comments.Content,
@@ -32,50 +35,68 @@ $sql = "SELECT
 		INNER JOIN 
 			Comments
 		ON 
-			Threads.ThreadId =" .mysqlI_real_escape_string($db,$_GET['id']). " AND Comments.Posted_To =" .mysqlI_real_escape_string($db,$_GET['id']).
-		" INNER JOIN 
+			Threads.ThreadId =" .mysqlI_real_escape_string($db,$_GET['id']). " AND Comments.Posted_To =" .mysqlI_real_escape_string($db,$_GET['id'])." AND Comments.Date = Threads.Date
+		 INNER JOIN 
 			Users
 		ON 
 			Threads.UserID = Users.UserID";
 		
         $res = mysqli_query($db, $sql);
+$sql2 = "SELECT
+            Comments.Content,
+			Comments.Post_by, 
+			UserName,
+			Comments.Date
+
+        FROM
+			Threads 
+		INNER JOIN 
+			Comments
+		ON 
+			Threads.ThreadId =" .mysqlI_real_escape_string($db,$_GET['id']). " AND Comments.Posted_To =" .mysqlI_real_escape_string($db,$_GET['id'])." AND Comments.Date != Threads.Date
+		 INNER JOIN 
+			Users
+		ON 
+			Comments.Post_by = Users.UserID";
+		$res2 = mysqli_query($db, $sql2);
 if(!$res)
 	{
-    echo 'The category could not be displayed, please try again later.' . mysqli_error($db);
+    echo 'The thread could not be displayed, please try again later.' . mysqli_error($db);
 	}else
 	{
 		if (!array_key_exists('sessionid', $_SESSION)){
 			while($row = mysqli_fetch_assoc($res)){
 			echo '<p><font face ="Arial" size = "8" style="color:#52FFB8;text-align:left;">' . $row['Topic']. '</font><br>' ;
-			
 			echo '<font face = "comic sans" size = "2"> posted by: ' .$row['UserName']. '. On: ' .date("Y-m-d", $row['Date']).'</font> </p>';
 			echo ' <br>';
 			echo '<font face = "comic sans" size = "5">' .$row['Content']. '</font>' ;
-			
 			echo '</div>';
 			echo '<hr style="width:100%;text-align:center;margin-left:0;height:0">';
 			}
 		}else{
-					while($row = mysqli_fetch_assoc($res))
-        {
-			echo '<p><font face ="Arial" size = "8" style="color:#52FFB8;text-align:left;">' . $row['Topic']. '</font><br>' ;
-			echo '<font face = "comic sans" size = "2"> posted by: ' .$row['UserName']. '. On: ' .date("Y-m-d", $row['Date']).'</font> </p>';
-			echo'<form action="reply.php">';
-			echo '<input type="submit" value="Reply" style="height: 30px; width: 120px; background-color:#52FFB8; margin-right:50%; margin-top:30% ">';
-			echo '</form>';
-			echo '<font face = "comic sans" size = "5">' .$row['Content']. '</font>' ;
-			echo '</div>';
-			echo '<hr style="width:100%;text-align:center;margin-left:0;height:0">';
-        }
+			while($row = mysqli_fetch_assoc($res))
+			{
+				echo '<p><font face ="Arial" size = "8" style="color:#52FFB8;text-align:left;">' . $row['Topic']. '</font><br>' ;
+				echo '<font face = "comic sans" size = "2"> posted by: ' .$row['UserName']. '. On: ' .date("Y-m-d", $row['Date']).'</font> </p>';
+				echo '<form action="reply.php">';
+				echo '<input type="submit" value="Reply" style="height: 30px; width: 120px; background-color:#52FFB8; margin-right:50%; margin-top:30% ">';
+				echo '</form>';
+				echo '<font face = "comic sans" size = "5">' .$row['Content']. '</font>' ;
+				echo '</div>';
+				echo '<hr style="width:100%;text-align:center;margin-left:0;height:0">';
+			}
 			
 		}
 		
-		
-		
-
-
-				
-        }
+}
+if(!$res2){
+	    echo 'The thread could not be displayed, please try again later.' . mysqli_error($db);
+		}else{
+			while($row = mysqli_fetch_assoc($res2)){
+				echo '<font face = "comic sans" size = "5">' .$row['Content']. '</font>' ;
+				echo '<font face = "comic sans" size = "2"> posted by: ' .$row['UserName']. '. On: ' .date("Y-m-d", $row['Date']).'</font> </p>';
+			}
+		}
      
 	
 ?>
