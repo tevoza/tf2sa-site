@@ -121,27 +121,21 @@ body {
   color: #8EB8E5;;
 }
 
+a {
+  display: block;
+  color: white;
+  padding: 8px 16px;
+  text-decoration: none;
+  font-style:italic;
+}
 
-#damage .damage, #airshots .airshots, #kills .kills, #scout .scout, #soldier .soldier, #demo .demo, #medic .medic{
+/* Change the link color on hover */
+a:hover {
+  color: #8EB8E5;;
+}
+
+#overall .overall, #airshots .airshots, #kills .kills, #scout .scout, #soldier .soldier, #demo .demo, #medic .medic{
   color:#52FFB8;
-}
-tablef {
-    border-collapse: collapse;
-    width: 100%;
-}
- 
-table a {
-    color: #000;
-}
- 
-table a:hover {
-    color:#373737;
-    text-decoration: none;
-}
- 
-
-td {
-    padding: 5px;
 }
 
 .topic {
@@ -173,4 +167,18 @@ td {
 textarea {
     width: 500px;
     height: 200px;
+}
+
+/*left table index */
+table.sortable tbody {
+    counter-reset: sortabletablescope;
+}
+table.sortable thead tr::before {
+    content: "";
+    display: table-cell;
+}
+table.sortable tbody tr::before {
+    content: counter(sortabletablescope);
+    counter-increment: sortabletablescope;
+    display: table-cell;
 }
