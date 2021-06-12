@@ -56,6 +56,43 @@ class dataAccess
         }
 
     }
+	
+	   public function printPost($res){
+       // echo "<table style='width:70%'>";
+        //echo "<tr style='color:white; text-align: left;'>";
+        //echo "<th>Rank</th>";
+        //Print headers.
+        //for($i = 0; $i < mysqli_num_fields($res); $i++){
+          //  $field = mysqli_fetch_field($res);
+           // echo "<th>{$field->name}</th>";
+        //}
+        //echo "</tr>";
+
+        //Print table data
+	echo"<table style='width:100%'; border='1'>";
+	echo"<tr style='color:white'; text-align: left; border='1'>";
+	echo "<th>Posts</th>";
+	echo"<th>Autor</th>";
+	echo "<th>Date</th>";
+	echo"</tr>";
+     
+        while($row = mysqli_fetch_assoc($res))
+        {
+            
+            echo "<tr style='color:white;text-align:left'>";
+				echo"<td class='topic'>";
+            echo '<h3><a href="topic.php?id=' . $row['ThreadID'] . '">' . $row['Topic'] . '</a><h3>';
+				echo"</td>";
+				echo"<td class='author'>";
+					echo $row['UserName'];
+				echo"</td>";
+				echo"<td class='date'>";
+					echo date("Y-m-d", $row['Date']);
+				echo"</td>";
+            echo "</tr>";
+        }
+echo"</table>";
+    }
 }
 
 ?>

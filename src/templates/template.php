@@ -47,6 +47,7 @@ class Template
     }
     else
     {
+		
       return "welcome, guest";
     }
   }
@@ -58,6 +59,7 @@ class Template
       $STATS = $this->WWW.$_ENV['STATS_PG'];
       $MAPS = $this->WWW.$_ENV['MAPS_PG'];
       $FORUM = $this->WWW.$_ENV['FORUM_PG'];
+	  $TOPIC = $this->WWW.$_ENV['TOPIC_PG'];
       $DEMOS = $this->WWW.$_ENV['DEMOS_PG'];     
       $RULES = $this->WWW.$_ENV['RULES_PG'];
       $LOGIN = $this->WWW.$_ENV['LOGIN_PG'];

@@ -13,8 +13,9 @@ $template->printHead();
 <div id="page-container">
 <?php $template->printHeader(BASE_DIR); ?>
 <div id="content-wrap">
+<div id="auth">
 <p>
-<pre>
+
 
 <h1 style="color:#52FFB8;text-align:left"><b>signup</b></h1>
 <?php 

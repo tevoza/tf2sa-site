@@ -15,6 +15,23 @@ $template->printHead();
 
 we put rules here
 
+ <?php
+$data = new dataAccess();
+  $db = $data->getDbCon(); 
+ echo $_SESSION['sessionid']; 
+ $sql = "SELECT ThreadID from Threads where UserID = (SELECT UserID from Users where SessionID = '".$_SESSION['sessionid']."')";
+ $res = mysqli_query($db, $sql);
+ if(!$res)
+{
+    echo 'The category could not be displayed, please try again later.' . mysqli_error($db);
+}else{
+while($row = mysqli_fetch_assoc($res)){
+echo  $row['ThreadID']	;
+	
+}
+}
+ ?>
+
 </p>
 </div>
 <footer id="footer">tf2sa</footer>

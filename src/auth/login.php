@@ -34,7 +34,6 @@ if (isset($_POST['username']))
     echo 'success! welcome back '.($_POST['username']);
     //Add session here
     $UserID = mysqli_fetch_row($res)[0];
-    session_start();
     $_SESSION['sessionid'] = hash('sha256', time().$UserID);
     $q = "UPDATE Users
     SET SessionID = '".$_SESSION['sessionid']."'
@@ -58,7 +57,7 @@ echo '
   <input type="text" id="username" name="username"> <br>
   <label for="password">password</label><br>
   <input type="password" id="password" name="password"> <br>
-  <br><input type="submit" value="signup">
+  <br><input type="submit" value="Login">
 </form>
 ';
 }
