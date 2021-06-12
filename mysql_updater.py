@@ -144,6 +144,20 @@ def DBInit(cursor):
         PRIMARY KEY (GameID)
     ) ENGINE = InnoDB;
     """)
+
+        cursor.execute("""
+    CREATE TABLE IF NOT EXISTS Comments (
+        CommentID INT UNSIGNED NOT NULL AUTO_INCREMENT,
+        ThreadID INT UNSIGNED NOT NULL,
+        Content VARCHAR(65000),
+        Date UNSIGNED INT
+        PRIMARY KEY (ThreadIdD, CommentID)
+        CONSTRAINT fk_thread_id
+            FOREIGN KEY (ThreadID) REFERENCES THREADS (ThreadID)
+            ON DELETE CASCADE
+            ON UPDATE RESTRICT       
+    ) ENGINE = InnoDB;
+    """)
     print("done")
 
 def UpdatePlayerNames(cursor):
