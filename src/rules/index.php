@@ -7,7 +7,7 @@ $dotenv->load();
 $template = new Template();
 $template->printHead();
 ?>
-<body id="forum">
+<body id="rules">
 <div id="page-container">
 <?php $template->printHeader(BASE_DIR); ?>
 <div id="content-wrap">

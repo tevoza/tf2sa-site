@@ -57,7 +57,8 @@ class dataAccess
         }
       }
       echo "</tr>";
-    }	
+    }
+  }	
 	   public function printPost($res){
 
 	echo"<table style='width:100%'; border='1'>";
@@ -85,7 +86,7 @@ class dataAccess
 echo"</table>";
     }
 
-  }
+  
   public function printTable($res){
       echo "<table style='width:70%'";
       echo "<tr style='color:white; text-align: left;'>";

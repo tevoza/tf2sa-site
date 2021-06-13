@@ -33,7 +33,7 @@ else
   $reply = $_POST['reply'];
 
    $sql1 = "INSERT 
-   INTO Comments (Posted_to, Content, Date, Post_by) 
+   INTO Comments (ThreadID, Content, Date, UserID) 
    VALUES 
    ((SELECT ThreadID from Threads where ThreadID ='" .mysqlI_real_escape_string($db,$_GET['id']). "'), 
    '".addslashes($reply)."',

@@ -26,7 +26,7 @@ $db = $data->getDbCon();
 $sql = "SELECT
 			Topic,
             Comments.Content,
-			Comments.Posted_to, 
+			Comments.ThreadID, 
 			UserName,
 			Comments.Date
 
@@ -35,7 +35,7 @@ $sql = "SELECT
 		INNER JOIN 
 			Comments
 		ON 
-			Threads.ThreadId =" .mysqlI_real_escape_string($db,$_GET['id']). " AND Comments.Posted_to =" .mysqlI_real_escape_string($db,$_GET['id'])." AND Comments.Date = Threads.Date
+			Threads.ThreadId =" .mysqlI_real_escape_string($db,$_GET['id']). " AND Comments.ThreadID =" .mysqlI_real_escape_string($db,$_GET['id'])." AND Comments.Date = Threads.Date
 		 INNER JOIN 
 			Users
 		ON 
@@ -44,7 +44,7 @@ $sql = "SELECT
         $res = mysqli_query($db, $sql);
 $sql2 = "SELECT
             Comments.Content,
-			Comments.Posted_to, 
+			Comments.ThreadID, 
 			UserName,
 			Comments.Date
 
@@ -53,11 +53,11 @@ $sql2 = "SELECT
 		INNER JOIN 
 			Comments
 		ON 
-			Threads.ThreadId =" .mysqlI_real_escape_string($db,$_GET['id']). " AND Comments.Posted_to =" .mysqlI_real_escape_string($db,$_GET['id'])." AND Comments.Date != Threads.Date
+			Threads.ThreadId =" .mysqlI_real_escape_string($db,$_GET['id']). " AND Comments.ThreadID =" .mysqlI_real_escape_string($db,$_GET['id'])." AND Comments.Date != Threads.Date
 		 INNER JOIN 
 			Users
 		ON 
-			Comments.Post_by = Users.UserID
+			Comments.UserID = Users.UserID
 		ORDER BY
 		Comments.date 
 		DESC";
