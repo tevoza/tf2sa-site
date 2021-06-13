@@ -35,7 +35,7 @@ else
   $topic = $_POST['topic_name'];
   $comment = $_POST['comment'];
    $sql = "INSERT INTO Threads (UserID, Topic, Date) VALUES ((SELECT UserID from Users where SessionID = '".$_SESSION['sessionid']."'), '".addslashes($topic)."',".time().")";
-   $sql1 = "INSERT INTO Comments (Posted_to, Content, Date, Post_by) VALUES ((SELECT ThreadID from Threads where UserID = (SELECT UserID from Users where SessionID = '".$_SESSION['sessionid']."')), '".addslashes($comment)."',".time().",(SELECT UserID from Users where SessionID = '".$_SESSION['sessionid']."'))";
+   $sql1 = "INSERT INTO Comments (Posted_to, Content, Date, Post_by) VALUES ((SELECT ThreadID from Threads where UserID = (SELECT UserID from Users where SessionID = '".$_SESSION['sessionid']."') AND Date = ".time()."), '".addslashes($comment)."',".time().",(SELECT UserID from Users where SessionID = '".$_SESSION['sessionid']."'))";
     $result = mysqli_query($db, $sql);
 	$result = mysqli_query($db, $sql1);
     

@@ -59,6 +59,7 @@ $sql2 = "SELECT
 		ON 
 			Comments.Post_by = Users.UserID";
 		$res2 = mysqli_query($db, $sql2);
+		
 if(!$res)
 	{
     echo 'The thread could not be displayed, please try again later.' . mysqli_error($db);
@@ -78,8 +79,9 @@ if(!$res)
 			{
 				echo '<p><font face ="Arial" size = "8" style="color:#52FFB8;text-align:left;">' . $row['Topic']. '</font><br>' ;
 				echo '<font face = "comic sans" size = "2"> posted by: ' .$row['UserName']. '. On: ' .date("Y-m-d", $row['Date']).'</font> </p>';
-				echo '<form action="reply.php">';
-				echo '<input type="submit" value="Reply" style="height: 30px; width: 120px; background-color:#52FFB8; margin-right:50%; margin-top:30% ">';
+				echo '<form action="reply.php" method="get" >';
+				$id = mysqlI_real_escape_string($db,$_GET['id']);
+				echo '<h3 style="height: 30px; width: 120px; margin-right:50%; margin-top:30%";> <a href="reply.php?id=' .$id.'">Reply</a></h3><br>';
 				echo '</form>';
 				echo '<font face = "comic sans" size = "5">' .$row['Content']. '</font>' ;
 				echo '</div>';
