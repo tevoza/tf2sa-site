@@ -33,8 +33,6 @@ HPM_THRESH = 1300
 
 def DBInit(cursor):
     print("confirming/recreating tables... ", end='')
-
-    #verify
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS Users(
         UserID INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -43,7 +41,40 @@ def DBInit(cursor):
         PassHash CHAR(64) NOT NULL,
         SessionID CHAR(64),
         JoinDate INT UNSIGNED,
-        PRIMARY KEY(UserID, UserName)
+        PRIMARY KEY(UserID, Username)
+    ) ENGINE = InnoDB DEFAULT CHARSET=utf8mb4;
+    """)
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS Threads (
+        ThreadID INT UNSIGNED NOT NULL AUTO_INCREMENT,
+        UserID INT UNSIGNED NOT NULL,
+        Topic VARCHAR(300),
+        Date INT UNSIGNED,
+        PRIMARY KEY (ThreadID),
+        CONSTRAINT `fk_user_id`
+            FOREIGN KEY (UserID) REFERENCES Users (UserID)
+            ON DELETE CASCADE
+            ON UPDATE CASCADE
+    ) ENGINE = InnoDB DEFAULT CHARSET=utf8mb4;
+    """)
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS Comments (
+        CommentID INT UNSIGNED NOT NULL AUTO_INCREMENT,
+        ThreadID INT UNSIGNED NOT NULL,
+        UserID INT UNSIGNED,
+        Date INT UNSIGNED,
+        Content TEXT(21000),
+        PRIMARY KEY (CommentID),
+        CONSTRAINT `fk_thread_id`
+            FOREIGN KEY (ThreadID) REFERENCES Threads (ThreadID)
+            ON DELETE CASCADE
+            ON UPDATE CASCADE,
+        CONSTRAINT `fk_user_comment_id`
+            FOREIGN KEY (UserID) REFERENCES Users (UserID)
+            ON DELETE CASCADE
+            ON UPDATE CASCADE
     ) ENGINE = InnoDB DEFAULT CHARSET=utf8mb4;
     """)
 
@@ -145,19 +176,6 @@ def DBInit(cursor):
     ) ENGINE = InnoDB;
     """)
 
-        cursor.execute("""
-    CREATE TABLE IF NOT EXISTS Comments (
-        CommentID INT UNSIGNED NOT NULL AUTO_INCREMENT,
-        ThreadID INT UNSIGNED NOT NULL,
-        Content VARCHAR(65000),
-        Date UNSIGNED INT
-        PRIMARY KEY (ThreadIdD, CommentID)
-        CONSTRAINT fk_thread_id
-            FOREIGN KEY (ThreadID) REFERENCES THREADS (ThreadID)
-            ON DELETE CASCADE
-            ON UPDATE RESTRICT       
-    ) ENGINE = InnoDB;
-    """)
     print("done")
 
 def UpdatePlayerNames(cursor):
@@ -297,9 +315,9 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
         LIMIT = int(sys.argv[1])
         if "stat" in sys.argv:
-            cursor.execute("drop table WeaponStats, Weapons, ClassStats, PlayerStats, Players, Games, BlacklistGames;")
+            cursor.execute("DROP TABLE IF EXISTS WeaponStats, Weapons, ClassStats, PlayerStats, Players, Games, BlacklistGames;")
         if "forum" in sys.argv:
-            cursor.execute("drop table Users")
+            cursor.execute("DROP TABLE IF EXISTS Comments, Threads, Users")
 
     DBInit(cursor)
 
