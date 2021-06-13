@@ -18,7 +18,7 @@ $template->printHead();
  
 if($_SERVER['REQUEST_METHOD'] != "POST")
 {
-   
+   //display forum for adding a thread
     echo 
 	'<form method="post" action="">
         Topic: <input type="text" name="topic_name" /><br>
@@ -34,8 +34,27 @@ else
   
   $topic = $_POST['topic_name'];
   $comment = $_POST['comment'];
-   $sql = "INSERT INTO Threads (UserID, Topic, Date) VALUES ((SELECT UserID from Users where SessionID = '".$_SESSION['sessionid']."'), '".addslashes($topic)."',".time().")";
-   $sql1 = "INSERT INTO Comments (Posted_to, Content, Date, Post_by) VALUES ((SELECT ThreadID from Threads where UserID = (SELECT UserID from Users where SessionID = '".$_SESSION['sessionid']."')), '".addslashes($comment)."',".time().",(SELECT UserID from Users where SessionID = '".$_SESSION['sessionid']."'))";
+  //Create Queries necessary for adding tables to databases
+   $sql = "INSERT 
+   INTO Threads 
+   (UserID, Topic, Date) 
+   VALUES 
+   ((SELECT UserID from Users where SessionID = '".$_SESSION['sessionid']."'),
+   '".addslashes($topic)."',
+   ".time().")";
+   
+   //for threadid used a subquery that checks for the userid and when the thread was posted, if thread and first comment added at the same time 
+   //to avert error from before 
+   $sql1 = "INSERT 
+   INTO Comments 
+   (ThreadID, Content, Date, UserID) 
+   VALUES 
+   ((SELECT ThreadID from Threads where UserID = (SELECT UserID from Users where SessionID = '".$_SESSION['sessionid']."') AND Date = ".time()."),
+   '".addslashes($comment)."',
+   ".time().",
+   (SELECT UserID from Users where SessionID = '".$_SESSION['sessionid']."'))";
+   
+   //Process Queries
     $result = mysqli_query($db, $sql);
 	$result = mysqli_query($db, $sql1);
     
