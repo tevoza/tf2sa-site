@@ -32,7 +32,13 @@ else
   $db = $data->getDbCon();
   $reply = $_POST['reply'];
 
-   $sql1 = "INSERT INTO Comments (Posted_to, Content, Date, Post_by) VALUES ((SELECT ThreadID from Threads where ThreadID ='" .mysqlI_real_escape_string($db,$_GET['id']). "'), '".addslashes($reply)."',".time().",(SELECT UserID from Users where SessionID = '".$_SESSION['sessionid']."'))";
+   $sql1 = "INSERT 
+   INTO Comments (Posted_to, Content, Date, Post_by) 
+   VALUES 
+   ((SELECT ThreadID from Threads where ThreadID ='" .mysqlI_real_escape_string($db,$_GET['id']). "'), 
+   '".addslashes($reply)."',
+   ".time().",
+   (SELECT UserID from Users where SessionID = '".$_SESSION['sessionid']."'))";
 	$result = mysqli_query($db, $sql1);
     
 	if(!$result)

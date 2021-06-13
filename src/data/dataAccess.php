@@ -62,8 +62,8 @@ class dataAccess
 	echo"<table style='width:100%'; border='1'>";
 	echo"<tr style='color:white'; text-align: left; border='1'>";
 	echo "<th style = 'background-color: #B40E1F'; 'color: #F0F0F0';>Posts</th>";
-	echo"<th>Autor</th>";
-	echo "<th>Date</th>";
+	echo"<th style = 'background-color: #B40E1F'; 'color: #F0F0F0';>Autor</th>";
+	echo "<th style = 'background-color: #B40E1F'; 'color: #F0F0F0';>Date</th>";
 	echo"</tr>";
      
         while($row = mysqli_fetch_assoc($res))
