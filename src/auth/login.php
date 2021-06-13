@@ -39,7 +39,6 @@ if (isset($_POST['username']))
     SET SessionID = '".$_SESSION['sessionid']."'
     WHERE UserID = ".$UserID;
     $res = mysqli_query($db, $q);
-    echo '<br>'.$_SESSION['sessionid'];
   }
   else
   {

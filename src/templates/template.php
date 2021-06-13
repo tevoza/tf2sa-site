@@ -30,11 +30,12 @@ class Template
       ';
    }
 
-  public function getName()
+  public function UserStatus()
   {
     session_start();
-    if (array_key_exists('sessionid', $_SESSION))
+    if (array_key_exists('sessionid', $_SESSION)) //user logged in
     {
+      $LOGOFF = $this->WWW.$_ENV['LOGOFF_PG']; 
       $data = new dataAccess();
       $db = $data->getDbCon();
       //CHECK IF USER EXISTS
@@ -42,14 +43,24 @@ class Template
       WHERE SessionID = '".$_SESSION['sessionid']."'";
       $res = mysqli_query($db, $q);
       $Username = mysqli_fetch_row($res)[0];
-      return "welcome ".$Username;
+      return 'welcome '.$Username.' <br>
+      <ul>
+        <li><a class="sign out" href="'.$LOGOFF.'">log off</a></li>
+      </ul>';
       mysqli_close();
     }
     else
     {
-		
-      return "welcome, guest";
+      $LOGIN = $this->WWW.$_ENV['LOGIN_PG']; 
+      $SIGNUP = $this->WWW.$_ENV['SIGNUP_PG'];
+      return'
+      welcome, guest
+      <ul>
+        <li><a class="login" href="'.$LOGIN.'">login</a></li>
+        <li><a class="signup" href="'.$SIGNUP.'">signup</a></li>
+      </ul>';
     }
+
   }
 
    public function printHeader()
@@ -59,11 +70,9 @@ class Template
       $STATS = $this->WWW.$_ENV['STATS_PG'];
       $MAPS = $this->WWW.$_ENV['MAPS_PG'];
       $FORUM = $this->WWW.$_ENV['FORUM_PG'];
-	  $TOPIC = $this->WWW.$_ENV['TOPIC_PG'];
+	    $TOPIC = $this->WWW.$_ENV['TOPIC_PG'];
       $DEMOS = $this->WWW.$_ENV['DEMOS_PG'];     
       $RULES = $this->WWW.$_ENV['RULES_PG'];
-      $LOGIN = $this->WWW.$_ENV['LOGIN_PG'];
-      $SIGNUP = $this->WWW.$_ENV['SIGNUP_PG'];
       echo'
       <div id="header">
          <div id="icon">
@@ -76,11 +85,7 @@ class Template
 
          <div id="user" style="color:white">
           <div id="navbar">
-            '.$this->getName().'
-            <ul>
-              <li><a class="login" href="'.$LOGIN.'">login</a></li>
-              <li><a class="signup" href="'.$SIGNUP.'">signup</a></li>
-            </ul> 
+            '.$this->UserStatus().'
           </div>
          </div>
       </div>
