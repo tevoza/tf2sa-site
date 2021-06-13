@@ -79,6 +79,63 @@ def DBInit(cursor):
     """)
 
     cursor.execute("""
+    CREATE TABLE IF NOT EXISTS Images (
+        ImageID INT UNSIGNED NOT NULL AUTO_INCREMENT,
+        CommentID INT UNSIGNED NOT NULL,
+        ImageHash CHAR(64) NOT NULL,
+        PRIMARY KEY (ImageID),
+        CONSTRAINT `fk_image_commentid`
+            FOREIGN KEY (CommentID) REFERENCES Comments (CommentID)
+            ON DELETE CASCADE
+            ON UPDATE CASCADE
+    ) ENGINE = InnoDB DEFAULT CHARSET=utf8mb4;
+    """)
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS Polls (
+        PollID INT UNSIGNED NOT NULL AUTO_INCREMENT,
+        CommentID INT UNSIGNED NOT NULL,
+        Topic VARCHAR(300),
+        PRIMARY KEY (PollID),
+        CONSTRAINT `fk_poll_commentid`
+            FOREIGN KEY (CommentID) REFERENCES Comments (CommentID)
+            ON DELETE CASCADE
+            ON UPDATE CASCADE
+    ) ENGINE = InnoDB DEFAULT CHARSET=utf8mb4;
+    """)
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS PollOptions (
+        PollOptionID INT UNSIGNED NOT NULL AUTO_INCREMENT,
+        PollID INT UNSIGNED NOT NULL,
+        Option VARCHAR(300),
+        PRIMARY KEY (PollOptionID),
+        CONSTRAINT `fk_polloptions_pollid`
+            FOREIGN KEY (PollID) REFERENCES Polls (PollID)
+            ON DELETE CASCADE
+            ON UPDATE CASCADE
+    ) ENGINE = InnoDB DEFAULT CHARSET=utf8mb4;
+    """)
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS PollVotes (
+        PollVoteID INT UNSIGNED NOT NULL AUTO_INCREMENT,
+        PollOptionID INT UNSIGNED NOT NULL,
+        UserID INT UNSIGNED NOT NULL,
+        Option VARCHAR(300),
+        PRIMARY KEY (PollVoteID),
+        CONSTRAINT `fk_pollvotes_polloptionid`
+            FOREIGN KEY (PollOptionID) REFERENCES PollOptions (PollOptionID)
+            ON DELETE CASCADE
+            ON UPDATE CASCADE,
+        CONSTRAINT `fk_user_pollvoteid`
+            FOREIGN KEY (UserID) REFERENCES Users (UserID)
+            ON DELETE CASCADE
+            ON UPDATE CASCADE
+    ) ENGINE = InnoDB DEFAULT CHARSET=utf8mb4;
+    """)
+
+    cursor.execute("""
     CREATE TABLE IF NOT EXISTS Games (
         GameID INT UNSIGNED NOT NULL,
         Date INT UNSIGNED,
@@ -317,7 +374,7 @@ if __name__ == "__main__":
         if "stat" in sys.argv:
             cursor.execute("DROP TABLE IF EXISTS WeaponStats, Weapons, ClassStats, PlayerStats, Players, Games, BlacklistGames;")
         if "forum" in sys.argv:
-            cursor.execute("DROP TABLE IF EXISTS Comments, Threads, Users")
+            cursor.execute("DROP TABLE IF EXISTS PollVotes, PollOptions, Polls, Images, Comments, Threads, Users")
 
     DBInit(cursor)
 

@@ -18,13 +18,19 @@ $template->printHead();
  
 if($_SERVER['REQUEST_METHOD'] != "POST")
 {
-   
-    echo 
-	'<form method="post" action="">
-        Reply: <br>
+  ?> 
+	<form action="upload.php" method="post" enctype="multipart/form-data">
+		Select image to upload
+		<input type="file" name="fileToUpload" id="fileToUpload">
+		<input type="submit" value="upload image" name="submit">
+	</form>
+
+	<form method="post" action="">
+		Reply: <br>
 		<textarea name="reply" /></textarea><br>
-        <input type="submit" value="Add Comment" /><br>
-     </form>';
+		<input type="submit" value="Add Comment" /><br>
+  </form>
+	<?php 
 }
 else
 {
@@ -32,23 +38,25 @@ else
   $db = $data->getDbCon();
   $reply = $_POST['reply'];
 
-   $sql1 = "INSERT 
-   INTO Comments (ThreadID, Content, Date, UserID) 
-   VALUES 
-   ((SELECT ThreadID from Threads where ThreadID ='" .mysqlI_real_escape_string($db,$_GET['id']). "'), 
-   '".addslashes($reply)."',
-   ".time().",
-   (SELECT UserID from Users where SessionID = '".$_SESSION['sessionid']."'))";
+	//get user id
+  $q = "SELECT UserID FROM Users 
+  WHERE SessionID = '".$_SESSION['sessionid']."'";
+  $res = mysqli_query($db, $q);
+  $UserID = mysqli_fetch_row($res)[0];
+	$ThreadID = $_GET['id'];
+
+  $sql1 = "INSERT INTO Comments (ThreadID, Content, Date, UserID) 
+  VALUES (".$ThreadID." ,'".addslashes($reply)."', ".time().", ".$UserID.")";
 	$result = mysqli_query($db, $sql1);
     
-	if(!$result)
-    {
-        //something went wrong, display the error
-        printf("error: %s\n", mysqli_error($db));
-    }
-    else
-    {
-        echo 'Comment successfully added.';
-    }
+	if (!$result)
+	{
+		//something went wrong, display the error
+		printf("error: %s\n", mysqli_error($db));
+	}
+	else
+	{
+		echo 'Comment successfully added.';
+	}
 }
 ?>

@@ -10,14 +10,12 @@ if (isset($_POST["submit"]))
   $check = getimagesize($_FILES["fileToUpload"]["tmp_name"]); //not always reliable
   if ($check !== false)
   {
-    echo "File is an image - ". $check["mime"]. ".";
     $uploadOk = 1;
   }
   else
   {
     echo "File not image";
     $uploadOk = 0;
-
   }
 }
 
@@ -49,12 +47,11 @@ else
 {
   if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file))
   {
-    echo "file ". htmlspecialchars(basename($_FILES["fileToUpload"]["name"])). "has been uploaded";
+    //echo "file ". htmlspecialchars(basename($_FILES["fileToUpload"]["name"])). "has been uploaded";
   }
   else
   {
     echo "some error has happened upon you!";
   }
 }
-
 ?>
