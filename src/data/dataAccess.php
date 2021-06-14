@@ -31,16 +31,43 @@ class dataAccess
     return (preg_match("#".$root."#", $ret)) ? rtrim($ret, '/') . '/' : null;
 }
 
+  public function printPollOptions($PollID)
+  {
+    $q="SELECT Topic FROM Polls WHERE PollID = ".$PollID; 
+    $res = mysqli_query($this->dbCon, $q);
+    $topic = mysqli_fetch_row($res)[0];
+    $q="
+    SELECT Option, COALESCE(COUNT(v.UserID)) Votes, PollID, o.PollOptionID
+    FROM PollOptions o 
+    LEFT JOIN PollVotes v 
+    ON v.PollOptionID=o.PollOptionID 
+    WHERE PollID = ".$PollID." 
+    GROUP BY PollOptionID"; 
+    $res = mysqli_query($this->dbCon, $q);
+
+    echo "
+      <div id=comment-poll>
+      <h2> Poll: {$topic} </h2> 
+    ";
+    while($row = mysqli_fetch_row($res))
+    {
+      echo "{$row[0]} <i>({$row[1]} votes)</i> <td class='item'><a color='white' href='vote.php?pollid={$row[2]}&optionid={$row[3]}'>Vote!</a></td> <br>";
+    }
+    echo '</div>';
+  }
+
   public function printPlayerTable($res){
     echo "<table style='width:80%', class='sortable'>";
     echo "<tr style='color:white; text-align: left;'>";
     //Print headers.
-    for($i = 0; $i < mysqli_num_fields($res); $i++){
-        $field = mysqli_fetch_field($res);
-        if ($i != 0) {
-          echo "<th>{$field->name}</th>";
-        }
+    for($i = 0; $i < mysqli_num_fields($res); $i++)
+    {
+      $field = mysqli_fetch_field($res);
+      if ($i != 0) {
+        echo "<th>{$field->name}</th>";
+      }
     }
+    
     echo "</tr>";
 
     //Print table data
@@ -59,8 +86,8 @@ class dataAccess
       echo "</tr>";
     }
   }	
-	   public function printPost($res){
 
+  public function printPost($res){
 	echo"<table style='width:100%'; border='1'>";
 	echo"<tr style='color:white'; text-align: left; border='1'>";
 	echo "<th style = 'background-color: #B40E1F'; 'color: #F0F0F0';>Posts</th>";

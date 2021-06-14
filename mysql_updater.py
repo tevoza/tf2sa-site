@@ -122,7 +122,6 @@ def DBInit(cursor):
         PollVoteID INT UNSIGNED NOT NULL AUTO_INCREMENT,
         PollOptionID INT UNSIGNED NOT NULL,
         UserID INT UNSIGNED NOT NULL,
-        Option VARCHAR(300),
         PRIMARY KEY (PollVoteID),
         CONSTRAINT `fk_pollvotes_polloptionid`
             FOREIGN KEY (PollOptionID) REFERENCES PollOptions (PollOptionID)
