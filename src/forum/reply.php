@@ -27,8 +27,24 @@ if($_SERVER['REQUEST_METHOD'] != "POST")
 
 	<form method="post" action="">
 		Reply: <br>
-		<textarea name="reply" /></textarea><br>
-		<input type="submit" value="Add Comment" /><br>
+		<textarea name="reply" placeholder="Reply" required></textarea><br>
+		<div>
+		<br><fieldset style="width:300px">
+			<legend><label for="poll"> Create a poll? (Optional) </label></legend>
+			<div>
+				<label for="title">Title</label>
+				<input type="text" name="title" id="title" placeholder="Poll Title">
+			</div>
+			<div>	
+				<label for="answers">Poll Answer Options (input per line)</label>
+			</div>
+			<div>       
+				<textarea name="answers" id="answers" ></textarea>
+			</div> 
+		</fieldset><br>
+		</div>
+<input type="submit" value="Add Comment" /><br>
+
   </form>
 	<?php 
 }
@@ -39,15 +55,20 @@ else
   $reply = $_POST['reply'];
 
 	//get user id
-  $q = "SELECT UserID FROM Users 
+  $q = "SELECT UserID 
+  FROM Users 
   WHERE SessionID = '".$_SESSION['sessionid']."'";
-  $res = mysqli_query($db, $q);
-  $UserID = mysqli_fetch_row($res)[0];
-	$ThreadID = $_GET['id'];
+ 
+ $res = mysqli_query($db, $q);
+ $UserID = mysqli_fetch_row($res)[0];
+ $ThreadID = $_GET['id'];
 
-  $sql1 = "INSERT INTO Comments (ThreadID, Content, Date, UserID) 
-  VALUES (".$ThreadID." ,'".addslashes($reply)."', ".time().", ".$UserID.")";
-	$result = mysqli_query($db, $sql1);
+ $sql1 = "INSERT INTO Comments (ThreadID, Content, Date, UserID) 
+ VALUES (".$ThreadID." ,'".addslashes($reply)."', ".time().", ".$UserID.")";
+ $result = mysqli_query($db, $sql1);
+ 
+
+ 
     
 	if (!$result)
 	{
@@ -55,8 +76,66 @@ else
 		printf("error: %s\n", mysqli_error($db));
 	}
 	else
-	{
-		echo 'Comment successfully added.';
+	{ 
+		if ((empty($_POST['title'])) && (!empty($_POST['answers']))){
+			echo 'The poll must have a topic to go by.';
+		}
+		else if((!empty($_POST['title'])) && (empty($_POST['answers']))){
+			echo 'The poll must have options to vote for.';
+		}
+		else if ((!empty($_POST['title'])) && (!empty($_POST['answers']))){
+			
+			$sql2 = "SELECT CommentID
+			FROM Comments
+			WHERE ThreadID = '" .$ThreadID."' AND Content = '".addslashes($reply)."'";
+			$res = mysqli_query($db, $sql2);
+			$CommentID = mysqli_fetch_row($res)[0];
+			$topic = $_POST['title'];
+			$answers = explode(PHP_EOL, $_POST['answers']);
+			$num_of_answers = count($answers);
+			
+			if($num_of_answers<2){
+				
+				echo 'The poll must have more than one voting option.';
+			
+			}else{
+				
+				$sql3 ="INSERT INTO Polls (CommentID, Topic)
+				VALUES (".$CommentID.",'".addslashes($topic)."')";
+				$res2 = mysqli_query($db, $sql3);
+				if (!$res2)
+					{
+						//something went wrong, display the error
+						printf("error: %s\n", mysqli_error($db));
+					}
+				else{
+						//the topic last where clause is unnecessary but humour me 
+						$sql = "SELECT PollID
+						FROM Polls
+						WHERE CommentID = '" .$CommentID."' AND Topic = '".addslashes($topic)."'";
+						$res3 = mysqli_query($db, $sql);
+						$PollID = mysqli_fetch_row($res3)[0];
+						
+						foreach($answers as $answer){
+							if (empty($answer)) continue;
+							$sql4 = "INSERT INTO PollOptions (PollID, Option)
+							VALUES (".$PollID.",'".addslashes($answer)."')";
+							$res4 = mysqli_query($db, $sql4);
+							if (!$res4)
+					{
+						//something went wrong, display the error
+						printf("error: %s\n", mysqli_error($db));
+					}
+							
+						}
+						echo 'Comment and Polls successfully added.';
+				}
+			}
+		}
+		else{
+			echo 'Comment successfully added.';
+		}
+		
 	}
 }
 ?>

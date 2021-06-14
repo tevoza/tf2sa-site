@@ -59,7 +59,7 @@ class dataAccess
       echo "</tr>";
     }
   }	
-	   public function printPost($res){
+   public function printPost($res){
 
 	echo"<table style='width:100%'; border='1'>";
 	echo"<tr style='color:white'; text-align: left; border='1'>";
