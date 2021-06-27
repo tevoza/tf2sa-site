@@ -8,6 +8,8 @@ $template = new Template();
 $template->printHead();
 
 ?>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="input.js"></script>
 
 <body id="reply">
 <div id="page-container">
@@ -19,13 +21,19 @@ $template->printHead();
 if($_SERVER['REQUEST_METHOD'] != "POST")
 {
   ?> 
-	<form action="upload.php" method="post" enctype="multipart/form-data">
-		Select image to upload
+	<form id="uploadForm" enctype="multipart/form-data">
+		<label>Select image to upload</label>
 		<input type="file" name="fileToUpload" id="fileToUpload">
 		<input type="submit" value="upload image" name="submit">
 	</form>
+	<div class="progress">
+			<div class="progress-bar"></div>
+	</div>
+	<div id="uploadStatus"></div>
 
 	<form method="post" action="">
+		<input id="imgHash" type="hidden" name="imgHash"/>
+
 		Reply: <br>
 		<textarea name="reply" placeholder="Reply" required></textarea><br>
 		<div>
@@ -50,25 +58,33 @@ if($_SERVER['REQUEST_METHOD'] != "POST")
 }
 else
 {
-  $data = new dataAccess();
-  $db = $data->getDbCon();
-  $reply = $_POST['reply'];
+	$data = new dataAccess();
+	$db = $data->getDbCon();
+	$reply = $_POST['reply'];
 
 	//get user id
-  $q = "SELECT UserID 
-  FROM Users 
-  WHERE SessionID = '".$_SESSION['sessionid']."'";
- 
- $res = mysqli_query($db, $q);
- $UserID = mysqli_fetch_row($res)[0];
- $ThreadID = $_GET['id'];
+	$q = "SELECT UserID 
+	FROM Users 
+	WHERE SessionID = '".$_SESSION['sessionid']."'";
 
- $sql1 = "INSERT INTO Comments (ThreadID, Content, Date, UserID) 
- VALUES (".$ThreadID." ,'".addslashes($reply)."', ".time().", ".$UserID.")";
- $result = mysqli_query($db, $sql1);
- 
+	$res = mysqli_query($db, $q);
+	$UserID = mysqli_fetch_row($res)[0];
+	$ThreadID = $_GET['id'];
 
- 
+	$now = time();
+	$sql1 = "INSERT INTO Comments (ThreadID, Content, Date, UserID) 
+	VALUES (".$ThreadID." ,'".addslashes($reply)."', ".$now.", ".$UserID.")";
+	$result = mysqli_query($db, $sql1);
+
+	$q = "SELECT CommentID FROM Comments
+	WHERE ThreadID={$ThreadID} AND UserID={$UserID} AND Date={$now}";
+	$res = mysqli_query($db, $q);
+	$CommentID = mysqli_fetch_row($res)[0];
+
+	if (!empty($_POST['imgHash'])) {
+		$q = "INSERT INTO Images (CommentID, ImageHash) VALUES ({$CommentID}, '{$_POST['imgHash']}')";
+		$res = mysqli_query($db, $q);
+	}
     
 	if (!$result)
 	{

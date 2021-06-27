@@ -203,3 +203,8 @@ table.sortable tbody tr::before {
     counter-increment: sortabletablescope;
     display: table-cell;
 }
+
+img{
+    width:100%;
+    max-width:600px;
+}

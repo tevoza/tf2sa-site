@@ -1,5 +1,5 @@
 <?php
-$target_dir="files/";
+$target_dir = "files/";
 $target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
 $uploadOk = 1;
 $imgFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
@@ -14,44 +14,44 @@ if (isset($_POST["submit"]))
   }
   else
   {
-    echo "File not image";
     $uploadOk = 0;
   }
 }
 
 // check if file already exists
+$imgHash = hash_file('sha256', $_FILES["fileToUpload"]["tmp_name"]);
+$target_file = $target_dir . $imgHash;
 if (file_exists($target_file))
 {
-  echo "sorry, file already exists";
-  $uploadOk = 0;
-}
-
-if ($_FILES["fileToUpload"]["size"] > 5000000)
-{
-  echo "file too massive";
-  $uploadOk = 0;
-}
-
-//Allow certain file formats
-if ($imgFileType != "jpg" && $imgFileType != "png" && $imgFileType != "jpeg" && $imgFileType != "gif")
-{
-  echo "not acceptable image format!";
-  $uploadOk = 0;
-}
-
-if ($uploadOk == 0)
-{
-  echo "file not acceptable";
+  echo $imgHash;
 }
 else
 {
-  if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file))
+  if ($_FILES["fileToUpload"]["size"] > 5000000)
   {
-    //echo "file ". htmlspecialchars(basename($_FILES["fileToUpload"]["name"])). "has been uploaded";
+    $uploadOk = 0;
+  }
+
+  //Allow certain file formats
+  if ($imgFileType != "jpg" && $imgFileType != "png" && $imgFileType != "jpeg" && $imgFileType != "gif")
+  {
+    $uploadOk = 0;
+  }
+
+  if ($uploadOk == 0)
+  {
+    echo "err";
   }
   else
-  {
-    echo "some error has happened upon you!";
+  { 
+    if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file))
+    {
+      echo $imgHash;
+    }
+    else
+    {
+      echo "err";
+    }
   }
 }
 ?>

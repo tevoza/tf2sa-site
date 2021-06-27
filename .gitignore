@@ -20,5 +20,6 @@ composer.phar
 
 **/demos/
 **/maps/
+**/files/
 
 .env

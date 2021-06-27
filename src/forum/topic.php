@@ -92,6 +92,8 @@ else
 		$CommentID = $row['CommentID'];
 		$q = "SELECT PollID, Topic FROM Polls WHERE CommentID=".$CommentID;	
 		$ThreadRES = mysqli_query($db, $q);
+		$q = "SELECT ImageHash FROM Images WHERE CommentID={$CommentID}";
+		$ImageQry = mysqli_query($db, $q);
 
 		echo '<div id="comment-wrap">';
 			//comment id
@@ -102,6 +104,8 @@ else
 
 			//comment content
 			echo '<div id="comment-content">';
+				//image stuff
+				if (mysqli_num_rows($ImageQry) > 0){echo "<img src='files/" . mysqli_fetch_row($ImageQry)[0] . "'>";}
 				echo '<div id="comment-text"> <font face = "comic sans" size = "5">' .$row['Content']. '</font> </div>';
 				if (mysqli_num_rows($ThreadRES) > 0){$data->printPollOptions(mysqli_fetch_row($ThreadRES)[0]);}
 			echo '</div>';
