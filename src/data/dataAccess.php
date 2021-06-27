@@ -37,12 +37,12 @@ class dataAccess
     $res = mysqli_query($this->dbCon, $q);
     $topic = mysqli_fetch_row($res)[0];
     $q="
-    SELECT Option, COALESCE(COUNT(v.UserID)) Votes, PollID, o.PollOptionID
+    SELECT Option, COALESCE(COUNT(v.UserID)) Votes, o.PollID, o.PollOptionID
     FROM PollOptions o 
     LEFT JOIN PollVotes v 
     ON v.PollOptionID=o.PollOptionID 
-    WHERE PollID = ".$PollID." 
-    GROUP BY PollOptionID"; 
+    WHERE o.PollID = ".$PollID." 
+    GROUP BY o.PollOptionID"; 
     $res = mysqli_query($this->dbCon, $q);
 
     echo "
@@ -88,55 +88,53 @@ class dataAccess
   }	
 
   public function printPost($res){
-	echo"<table style='width:100%'; border='1'>";
-	echo"<tr style='color:white'; text-align: left; border='1'>";
-	echo "<th style = 'background-color: #B40E1F'; 'color: #F0F0F0';>Posts</th>";
-	echo"<th style = 'background-color: #B40E1F'; 'color: #F0F0F0';>Autor</th>";
-	echo "<th style = 'background-color: #B40E1F'; 'color: #F0F0F0';>Date</th>";
-	echo"</tr>";
+    echo"<table style='width:100%'; border='1'>";
+    echo"<tr style='color:white'; text-align: left; border='1'>";
+    echo "<th style = 'background-color: #B40E1F'; 'color: #F0F0F0';>Posts</th>";
+    echo"<th style = 'background-color: #B40E1F'; 'color: #F0F0F0';>Autor</th>";
+    echo "<th style = 'background-color: #B40E1F'; 'color: #F0F0F0';>Date</th>";
+    echo"</tr>";
      
-        while($row = mysqli_fetch_assoc($res))
-        {
-            
-            echo "<tr style='color:white;text-align:left'>";
-				echo"<td class='topic'>";
-            echo '<h3><a href="topic.php?id=' . $row['ThreadID'] . '">' . $row['Topic'] . '</a><h3>';
-				echo"</td>";
-				echo"<td class='author'>";
-					echo $row['UserName'];
-				echo"</td>";
-				echo"<td class='date'>";
-					echo date("Y-m-d", $row['Date']);
-				echo"</td>";
-            echo "</tr>";
-        }
-echo"</table>";
+    while($row = mysqli_fetch_assoc($res))
+    {
+      echo "<tr style='color:white;text-align:left'>";
+      echo"<td class='topic'>";
+      echo '<h3><a href="topic.php?id=' . $row['ThreadID'] . '">' . $row['Topic'] . '</a><h3>';
+      echo"</td>";
+      echo"<td class='author'>";
+      echo $row['UserName'];
+      echo"</td>";
+      echo"<td class='date'>";
+      echo date("Y-m-d", $row['Date']);
+      echo"</td>";
+      echo "</tr>";
     }
+    echo"</table>";
+  }
 
   
   public function printTable($res){
-      echo "<table style='width:70%'";
-      echo "<tr style='color:white; text-align: left;'>";
-      //Print headers.
-      for($i = 0; $i < mysqli_num_fields($res); $i++){
-          $field = mysqli_fetch_field($res);
-          echo "<th style='text-align:left'>{$field->name}</th>";
+    echo "<table style='width:70%'";
+    echo "<tr style='color:white; text-align: left;'>";
+    //Print headers.
+    for($i = 0; $i < mysqli_num_fields($res); $i++){
+        $field = mysqli_fetch_field($res);
+        echo "<th style='text-align:left'>{$field->name}</th>";
+    }
+    echo "</tr>";
+
+    //Print table data
+    $rank = 0;
+    while($row = mysqli_fetch_row($res))
+    {
+      ++$rank;
+      echo "<tr style='color:white;text-align:left'>";
+      for ($x = 0; $x < count($row); $x++)
+      {
+        echo "<td>{$row[$x]}</td>";
       }
       echo "</tr>";
-
-      //Print table data
-      $rank = 0;
-      while($row = mysqli_fetch_row($res))
-      {
-          ++$rank;
-          echo "<tr style='color:white;text-align:left'>";
-          for ($x = 0; $x < count($row); $x++)
-          {
-            echo "<td>{$row[$x]}</td>";
-          }
-          echo "</tr>";
-      }
-
+    }
   }
 }
 

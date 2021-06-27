@@ -119,16 +119,20 @@ def DBInit(cursor):
 
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS PollVotes (
-        PollVoteID INT UNSIGNED NOT NULL AUTO_INCREMENT,
-        PollOptionID INT UNSIGNED NOT NULL,
         UserID INT UNSIGNED NOT NULL,
-        PRIMARY KEY (PollVoteID),
-        CONSTRAINT `fk_pollvotes_polloptionid`
-            FOREIGN KEY (PollOptionID) REFERENCES PollOptions (PollOptionID)
+        PollID INT UNSIGNED NOT NULL,
+        PollOptionID INT UNSIGNED NOT NULL,
+        PRIMARY KEY (UserID, PollID),
+        CONSTRAINT `fk_user_pollvotes`
+            FOREIGN KEY (UserID) REFERENCES Users (UserID)
             ON DELETE CASCADE
             ON UPDATE CASCADE,
-        CONSTRAINT `fk_user_pollvoteid`
-            FOREIGN KEY (UserID) REFERENCES Users (UserID)
+        CONSTRAINT `fk_poll_pollvotes`
+            FOREIGN KEY (PollID) REFERENCES Polls (PollID)
+            ON DELETE CASCADE
+            ON UPDATE CASCADE,
+        CONSTRAINT `fk_polloption_pollvotes`
+            FOREIGN KEY (PollOptionID) REFERENCES PollOptions (PollOptionID)
             ON DELETE CASCADE
             ON UPDATE CASCADE
     ) ENGINE = InnoDB DEFAULT CHARSET=utf8mb4;
