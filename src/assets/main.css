@@ -206,5 +206,6 @@ table.sortable tbody tr::before {
 
 img{
     width:100%;
-    max-width:600px;
+    max-width:300px;
+	max-width:300px;
 }
