@@ -22,7 +22,7 @@ $sidebar = new Sidebar();
   $data = new dataAccess();
   $db = $data->getDbCon();
   $q="
-SELECT p.SteamID, p.PlayerName, a.Matches, b.Hours, IFNULL(c.Kills, 0) AS 'Kills', IFNULL(c.Deaths, 0) AS 'Deaths', IFNULL(c.Assists, 0) AS 'Assists', IFNULL(e.Backstabs, 0) AS 'Backstabs', IFNULL(f.Headshots, 0) AS 'Headshots', IFNULL(d.Airshots, 0) AS 'Airshots', IFNULL(c.DPM, 0) AS 'DPM', a.DTM, a.HRM FROM Players p
+SELECT p.SteamID, p.PlayerName, a.Matches, ROUND(b.Hours, 1) Hours, ROUND(IFNULL(c.Kills, 0), 2) AS 'Kills', ROUND(IFNULL(c.Deaths, 0),2) AS 'Deaths', ROUND(IFNULL(c.Assists, 0),2) AS 'Assists', ROUND(IFNULL(e.Backstabs, 0),1) AS 'Backstabs', ROUND(IFNULL(f.Headshots, 0),1) AS 'Headshots', ROUND(IFNULL(d.Airshots, 0),2) AS 'Airshots', ROUND(IFNULL(c.DPM, 0),2) AS 'DPM', ROUND(a.DTM, 2) DTM, ROUND(a.HRM ,2) HRM FROM Players p
 LEFT JOIN 
 (
 	SELECT p.SteamID, COUNT(p.GameID) AS 'Matches', SUM(p.DamageTaken) * 60 / SUM(g.Duration) AS 'DTM', SUM(p.HealsReceived) * 60 / SUM(g.Duration) AS 'HRM' FROM Games g
@@ -72,7 +72,7 @@ LEFT JOIN
 ) AS f ON f.SteamID = p.SteamID
 HAVING Matches > ".$_ENV['MIN_MATCHES']."
 ORDER BY DPM DESC
-  ";
+";
   $res = mysqli_query($db, $q);
   ?>
   <h1 style="color:#52FFB8;text-align:left"><b>overall</b></h1>
