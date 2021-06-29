@@ -52,7 +52,7 @@ $data->printPost($res);
 }
  ?>
 </div>
-</div>'	
+</div>	
 
 
 </pre>
