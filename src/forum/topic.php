@@ -34,7 +34,7 @@ ON Threads.ThreadId =" .mysqlI_real_escape_string($db,$_GET['id']). " AND Commen
 INNER JOIN Users
 ON Comments.UserID = Users.UserID
 ORDER BY Comments.date 
-DESC";
+ASC";
 $res2 = mysqli_query($db, $sql2);
 ?>
 
@@ -55,7 +55,15 @@ else
 			echo '<p><font face ="Arial" size = "8" style="color:#52FFB8;text-align:left;">' . $row['Topic']. '</font><br>' ;
 			echo '<font face = "comic sans" size = "2"> posted by: ' .$row['UserName']. '. On: ' .date("Y-m-d", $row['Date']).'</font> </p>';
 			echo ' <br>';
-			echo '<font face = "comic sans" size = "5">' .$row['Content']. '</font>' ;
+			echo '<font face = "comic sans" size = "5">' .$row['Content']. '</font></div>' ;
+			$CommentID = $row['CommentID'];
+		    $q = "SELECT PollID, Topic FROM Polls WHERE CommentID=".$CommentID;	
+		    $ThreadRES = mysqli_query($db, $q);
+		    $q = "SELECT ImageHash FROM Images WHERE CommentID={$CommentID}";
+			$ImageQry = mysqli_query($db, $q);
+			if (mysqli_num_rows($ImageQry) > 0){echo "<div><img src='files/" . mysqli_fetch_row($ImageQry)[0] . "'></div>";}
+			if (mysqli_num_rows($ThreadRES) > 0){$data->printPollOptions(mysqli_fetch_row($ThreadRES)[0]);}
+			
 		}
 	}
 	else
