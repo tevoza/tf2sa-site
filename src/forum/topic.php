@@ -16,8 +16,9 @@ $template->printHeader(BASE_DIR);
 $data = new dataAccess();
 $db = $data->getDbCon();
 
+
 $sql = "
-SELECT Topic, Comments.Content, Comments.ThreadID, UserName, Comments.Date
+SELECT Topic, Comments.CommentID, Comments.Content, Comments.ThreadID, UserName, Comments.Date
 FROM Threads 
 INNER JOIN Comments
 ON Threads.ThreadId =" .mysqlI_real_escape_string($db,$_GET['id']). " AND Comments.ThreadID =" .mysqlI_real_escape_string($db,$_GET['id'])." AND Comments.Date = Threads.Date
@@ -68,14 +69,26 @@ else
 			//created the hyperlink 
 			echo '<h3 style="height: 30px; width: 120px; margin-right:50%; margin-top:30%; color:#52FFB8;"> <a href="reply.php?id=' .$id.'">Reply</a></h3><br>';
 			echo '</form>';
-			echo '<font face = "comic sans" size = "5">' .$row['Content']. '</font>' ;
+			echo '<font face = "comic sans" size = "5">' .$row['Content']. '</font></div>' ;
+		
+			$CommentID = $row['CommentID'];
+		    $q = "SELECT PollID, Topic FROM Polls WHERE CommentID=".$CommentID;	
+		    $ThreadRES = mysqli_query($db, $q);
+		    $q = "SELECT ImageHash FROM Images WHERE CommentID={$CommentID}";
+			$ImageQry = mysqli_query($db, $q);
+			if (mysqli_num_rows($ImageQry) > 0){echo "<div><img src='files/" . mysqli_fetch_row($ImageQry)[0] . "'></div>";}
+			if (mysqli_num_rows($ThreadRES) > 0){$data->printPollOptions(mysqli_fetch_row($ThreadRES)[0]);}
+			
+		
 		}
+	
+		
 	}
 }
 
 ?>
 </p>
-</div>
+
 <hr style="width:100%;text-align:center;margin-left:0;height:0">
 <?php
 
