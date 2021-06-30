@@ -8,7 +8,7 @@ $template = new Template();
 $template->printHead();
 
 ?>
-<body id="reply">
+<body id="forum">
 <div id="page-container">
 <?php $template->printHeader(BASE_DIR); ?>
 <?php

@@ -8,7 +8,7 @@ $dotenv->load();
 $template = new Template();
 $template->printHead();
 ?>
-<body id="post">
+<body id="forum">
 <div id="page-container">
 
 <?php 

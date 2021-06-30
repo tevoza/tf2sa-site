@@ -11,11 +11,13 @@ $template->printHead();
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="input.js"></script>
 
-<body id="reply">
+<body id="forum">
 <div id="page-container">
 <?php $template->printHeader(BASE_DIR); ?>
+<div>
 <h1 style="color:#52FFB8;text-align:left; height=100px;">Reply</h1>
 <?php
+
 
  
 if($_SERVER['REQUEST_METHOD'] != "POST")
@@ -154,4 +156,6 @@ else
 		
 	}
 }
+
 ?>
+</div>
