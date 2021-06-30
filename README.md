@@ -1,14 +1,7 @@
-# tf2sa-site
-## todo
-### forum features
+# tf2sa-site - reii 414 practical
+ - Adam Coetzee - 29982995  
+ - Thato Tau - 31542115
 
-**mark allocation** 
- - DB: proper representation of users, sessions, forums, posts, threads, polls, uploads, etc.
- - Session management
- - Navigation
- - Uploads
- - Working polls
- - Awesomeness of final product / extra ideas
+site has been deployed [here](http://tf2sa.xyz)
 
-### stats
- - on hold
+    ![alt text](https://github.com/tevoza/tf2sa-site/blob/main/sql/erd.png)
