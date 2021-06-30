@@ -31,9 +31,9 @@ site has been deployed [here](http://tf2sa.xyz)
 │   ├── stats  
 │   └── templates  
  ```
-  - in the project root, php depedencies are installed with `composer` (a php package manager):
+ - in the project root, php depedencies are installed with `composer` (a php package manager):
   `composer update`
-   - rename `.env.example` to `.env` and edit the following lines with your database details
+ - rename `.env.example` to `.env` and edit the following lines with your database details
    ```
    MYSQL_USR="usr"
    MYSQL_PWD="pwd"
@@ -42,5 +42,5 @@ site has been deployed [here](http://tf2sa.xyz)
    ```
    the `WWW` variable is used for page links, and is adjusted relative to the root pointed to by the web server  
    assuming you have cloned into your web server's root, the current config should work.
-    - an sql dump file is located in `sql/`
-  
+ - create a `files` directory in `src/forum` and give the webserver write permissions to it. 
+ - an sql dump file is located in `sql/` 
