@@ -22,9 +22,14 @@ We host 3 servers: <br>
     <li> TF2SA Jump (All Maps) | tempus.tf  129.232.150.23:27016 </li> <br>
 </ol>
 </div>
-
+<?php 
+$data = new dataAccess();
+$db = $data->getDbCon();
+$q = "SELECT Date FROM Games ORDER BY Date DESC LIMIT 1";  
+if ($res = mysqli_query($db, $q)){$update = mysqli_fetch_row($res)[0];}
+?>
 <div id="report">
-  <h2 style="color:#52FFB8;text-align:left"><b>two-week summary</b></h1>
+<h2 ><b style="color:#52FFB8;text-align:left">two-week summary</b> <i style="text-align:right>"> (updated <?php echo date("Y/m/d H:i", $update);?>) </i></h1>
   <?php 
   $data = new dataAccess();
   $db = $data->getDbCon();
@@ -70,7 +75,6 @@ We host 3 servers: <br>
 </div>
 
 </div>
-<footer id="footer">tf2sa</footer>
 </div>
 </body>
 </html>
