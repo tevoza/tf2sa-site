@@ -19,12 +19,17 @@ $template->printHead();
 $cutoff = time() - (60 * 60 * 24 * 365 * $_ENV['RECENT_THRESH_YEARS']);
 $data = new dataAccess();
 $db = $data->getDbCon();
+$thresh = time() - 14*24*60*60;
 $q="
-SELECT * FROM Games LIMIT 10;
-
-
-
+    SELECT Option, COALESCE(COUNT(v.UserID)) Votes, o.PollID, o.PollOptionID
+    FROM PollOptions o 
+    LEFT JOIN PollVotes v 
+    ON v.PollOptionID=o.PollOptionID 
+    WHERE o.PollID = ".$PollID." 
+    GROUP BY o.PollOptionID
 ";
+
+
 
 echo $q;
 $res = mysqli_query($db, $q);

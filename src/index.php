@@ -13,7 +13,8 @@ $template->printHead();
 <div id="content-wrap">
 
 <div id="info">
-Welcome to TF2A. The home of local South African pugs.
+  <h2 style="color:#52FFB8;text-align:left"><b>welcome</b></h1>
+Welcome to TF2SA. The home of local South African pugs.
 We host 3 servers: <br>
 <ol>
     <li> TF2SA Pug </t> 129.232.150.23:27016  </li> <br>
@@ -23,10 +24,49 @@ We host 3 servers: <br>
 </div>
 
 <div id="report">
-<pre>
-<?php 
-?>
-</pre>
+  <h2 style="color:#52FFB8;text-align:left"><b>two-week summary</b></h1>
+  <?php 
+  $data = new dataAccess();
+  $db = $data->getDbCon();
+  $thresh = time() - 14*24*60*60;
+  $q="
+  SELECT 
+    COUNT(DISTINCT g.GameID) Games, COUNT(DISTINCT ps.SteamID)
+  FROM
+    Games g, PlayerStats ps
+  WHERE
+    g.GameID = ps.GameID AND Date > {$thresh}
+  ";
+  if ($res = mysqli_query($db, $q))
+  {
+    $res    = mysqli_fetch_row($res);
+    echo "
+    <ul>
+      <li>{$res[0]} games</li>
+      <li>{$res[1]} unique players</li>
+    ";
+  }
+  $q=
+  "
+  SELECT
+    Map, COUNT(Map) Played
+  FROM
+    Games
+  WHERE
+    Date > {$thresh}
+  GROUP BY
+    Map
+  ORDER BY
+    Played DESC
+  ";
+  if ($res = mysqli_query($db, $q))
+  {
+    $data->printTable($res);
+  }
+  mysqli_close($db);
+  ?>
+  </ul> 
+
 </div>
 
 </div>
