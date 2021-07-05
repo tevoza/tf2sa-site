@@ -113,6 +113,21 @@ class dataAccess
     echo"</table>";
   }
 
+  public function printPlayerBest($res){
+    echo "<table><pre>";
+    //Print table data
+    $row = mysqli_fetch_row($res);
+    $fields = mysqli_fetch_fields($res);
+
+    for($i=0; $i < mysqli_num_fields($res); $i++)
+    {
+      if ($i == 0){echo "<tr><td>".$fields[$i]->name.'</td><td style="padding: 8px 16px;">'.$row[$i]."</td></tr>";}
+      else{
+        if ($i % 2 == 0){echo "<tr><td>".$fields[$i]->name."</td><td><a href='https://logs.tf/{$row[$i-1]}'>{$row[$i]}</td></tr>"; }
+      }  
+    }
+    echo "</pre></table>";
+  }
   
   public function printTable($res){
     echo "<table style='width:70%'";
@@ -136,6 +151,7 @@ class dataAccess
       }
       echo "</tr>";
     }
+    echo "</table>";
   }
 }
 

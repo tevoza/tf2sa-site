@@ -209,3 +209,23 @@ img{
     max-width:300px;
 	max-width:300px;
 }
+
+/*player page*/
+#player-id {
+  margin-left:50px;
+  margin-right:50px;
+  display:grid;
+  grid-template-columns: 1fr auto auto auto;
+  vertical-align: bottom;
+}
+
+#player-bests {
+  margin-left:50px;
+  margin-right:50px;
+  display:grid;
+  grid-template-columns: auto auto auto auto;
+}
+
+#player-bests-class{
+}
+

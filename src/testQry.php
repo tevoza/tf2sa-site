@@ -20,17 +20,17 @@ $cutoff = time() - (60 * 60 * 24 * 365 * $_ENV['RECENT_THRESH_YEARS']);
 $data = new dataAccess();
 $db = $data->getDbCon();
 $thresh = time() - 14*24*60*60;
+$steamid = 76561198080441494;
 $q="
-    SELECT Option, COALESCE(COUNT(v.UserID)) Votes, o.PollID, o.PollOptionID
-    FROM PollOptions o 
-    LEFT JOIN PollVotes v 
-    ON v.PollOptionID=o.PollOptionID 
-    WHERE o.PollID = ".$PollID." 
-    GROUP BY o.PollOptionID
-";
-
-
-
+SELECT
+  COUNT(ps.PlayerStatsID) AS Matches,  MaxDamage.DmgID, MaxDamage.Damage, MaxKills.GameID, MaxKills.Kills
+FROM
+  (SELECT ps.GameID, cs.Kills FROM ClassStats cs, PlayerStats ps WHERE cs.PlayerStatsID = ps.PlayerStatsID AND ClassID = 1 AND SteamID = ".$steamid." ORDER BY cs.Kills DESC LIMIT 1) AS MaxKills,
+  (SELECT ps.GameID DmgID, cs.Damage FROM ClassStats cs, PlayerStats ps WHERE cs.PlayerStatsID = ps.PlayerStatsID AND ClassID = 1 AND SteamID = ".$steamid." ORDER BY cs.Damage DESC LIMIT 1) AS MaxDamage, 
+  PlayerStats ps, ClassStats cs
+WHERE
+  cs.PlayerStatsID = ps.PlayerStatsID AND ClassID = 1 AND SteamID = ".$steamid
+;
 echo $q;
 $res = mysqli_query($db, $q);
 $data->printTable($res); 
