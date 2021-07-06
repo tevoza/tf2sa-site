@@ -71,8 +71,36 @@ function showGraph()
       var graphTarget = $("#graphCanvas");
 
       var barGraph = new Chart(graphTarget, {
-          type: 'line',
-          data: chartdata
+        type: 'line',
+        data: chartdata,
+        options: {
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: 'overall progression',
+              color: '#52FFB8',
+              font: {
+                family: 'Comic Sans MS',
+                size: 20,
+                weight: 'bold',
+                lineHeight: 1.2,
+              }
+            }
+          },
+          scales: {
+            x: {
+              ticks: {
+                color: 'white',
+              }
+            },
+            y: {
+              ticks: {
+                color: 'white',
+              }
+            }
+          }
+        },
       });
     });
   }
