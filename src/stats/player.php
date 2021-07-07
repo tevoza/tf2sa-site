@@ -50,6 +50,8 @@ $sidebar = new Sidebar();
   <h6 style="padding: 15px"><i>first game:</i>  <?php echo date("Y-m-d", $start); ?> </h6>
   <h6 style="padding: 15px">last game:  <?php echo date("Y-m-d", $end); ?> </h6>
   </div>
+  
+  <center><h4 style="color:#52FFB8;"> player bests </h4></center>
 
   <div id="player-bests">
 
