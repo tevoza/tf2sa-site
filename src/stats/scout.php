@@ -10,8 +10,6 @@ $template = new Template();
 $template->printHead();
 $sidebar = new Sidebar();
 ?>
-<button class="tablink" onclick="openPage('Home', this, 'red')">Home</button>
-<button class="tablink" onclick="openPage('News', this, 'green')" id="defaultOpen">News</button>
 <script src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js"></script>
 <body id="stats">
 <div id="page-container">
@@ -45,42 +43,36 @@ ORDER BY DPM DESC
   $resAll = mysqli_query($db, $q);
   ?>
   <h1 style="color:#52FFB8;text-align:left"><b>scout</b></h1>
-  <div id="Home" class="tabcontent">
+
+  <div class="w3-bar w3-black">
+    <button class="w3-bar-item w3-button" onclick="openTable('stats-recent')">Recent</button>
+    <button class="w3-bar-item w3-button" onclick="openTable('stats-all')">All-time</button>
+  </div>
+
+  <div id="stats-recent" class="stats-table" style="display:block">
     <?php $data->printPlayerTable($res); ?>
   </div>
 
-  <div id="News" class="tabcontent">
+  <div id="stats-all" class="stats-table" style="display:none">
     <?php $data->printPlayerTable($resAll); ?>
   </div>
-  <?php mysqli_close($db); ?>
+
 </div>
+
+<?php mysqli_close($db); ?>
 
 </div>
 </div>
 </body>
 </html>
-  <script>
-  function openPage(pageName, elmnt, color) {
-  // Hide all elements with class="tabcontent" by default */
-  var i, tabcontent, tablinks;
-  tabcontent = document.getElementsByClassName("tabcontent");
-  for (i = 0; i < tabcontent.length; i++) {
-    tabcontent[i].style.display = "none";
+
+<script>
+function openTable(tableName) {
+  var i;
+  var x = document.getElementsByClassName("stats-table");
+  for (i = 0; i < x.length; i++) {
+    x[i].style.display = "none";
   }
-
-  // Remove the background color of all tablinks/buttons
-  tablinks = document.getElementsByClassName("tablink");
-  for (i = 0; i < tablinks.length; i++) {
-    tablinks[i].style.backgroundColor = "";
-  }
-
-  // Show the specific tab content
-  document.getElementById(pageName).style.display = "block";
-
-  // Add the specific color to the button used to open the tab content
-  elmnt.style.backgroundColor = color;
+  document.getElementById(tableName).style.display = "block";
 }
-
-// Get the element with id="defaultOpen" and click on it
-document.getElementById("defaultOpen").click();
-  </script>
+</script>

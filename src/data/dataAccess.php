@@ -85,6 +85,7 @@ class dataAccess
       }
       echo "</tr>";
     }
+    echo"</table>";
   }	
 
   public function printPost($res){
