@@ -18,28 +18,79 @@ $sidebar = new Sidebar();
 <?php $sidebar->printSideBar('demo')?>
 <div id="content">
   <?php
-  $cutoff = time() - (60 * 60 * 24 * 365 * $_ENV['RECENT_THRESH_YEARS']);
   $data = new dataAccess();
+  $cutoff = time() - (60 * 60 * 24 * 365 * $_ENV['RECENT_THRESH_YEARS']);
   $db = $data->getDbCon();
   $q="
-SELECT ps.SteamID, PlayerName Player, COUNT(DISTINCT ps.GameID) Matches, ROUND(SUM(Playtime)/3600, 1) Hours, ROUND(AVG(Kills),1) Kills, ROUND(AVG(Deaths), 1) Deaths,
-  ROUND(AVG(Assists), 1) Assists, ROUND(AVG(Airshots),2) Airshots, ROUND(SUM(Damage)/SUM(Playtime)*60,1) DPM, ROUND(SUM(DamageTaken)/SUM(Playtime)*60,1) DTM, ROUND(SUM(HealsReceived)/SUM(Playtime)*60,1) HRM
-FROM PlayerStats ps, Players p, Games g, ClassStats cs
-WHERE ps.SteamID=p.SteamID AND ps.GameID=g.GameID and ps.PlayerStatsID=cs.PlayerStatsID AND Date > ".$cutoff." AND ClassID IN (4)
+SELECT
+  ps.SteamID, PlayerName Player, COUNT(DISTINCT ps.GameID) Matches, ROUND(SUM(Playtime)/3600, 1) Hours,
+  ROUND(SUM(Kills)/COUNT(DISTINCT ps.GameID),1) Kills, ROUND(SUM(Deaths)/COUNT(DISTINCT ps.GameID), 1) Deaths,
+  ROUND(SUM(Assists)/COUNT(DISTINCT ps.GameID), 1) Assists, ROUND(SUM(Airshots)/COUNT(DISTINCT ps.GameID),2) Airshots,
+  ROUND(SUM(Damage)/SUM(Playtime)*60,1) DPM, ROUND(SUM(DamageTaken)/SUM(Playtime)*60,1) DTM, ROUND(SUM(HealsReceived)/SUM(Playtime)*60,1) HRM
+FROM 
+  PlayerStats ps, Players p, Games g, ClassStats cs
+WHERE 
+  ps.SteamID=p.SteamID AND ps.GameID=g.GameID and ps.PlayerStatsID=cs.PlayerStatsID AND Date > {$cutoff} AND ClassID IN (4)
 GROUP BY ps.SteamID
-HAVING Matches > ".$_ENV['MIN_MATCHES']."
+HAVING Matches > {$_ENV['MIN_MATCHES_RECENT']}
 ORDER BY DPM DESC
   ";
   $res = mysqli_query($db, $q);
+  $q="
+SELECT
+  ps.SteamID, PlayerName Player, COUNT(DISTINCT ps.GameID) Matches, ROUND(SUM(Playtime)/3600, 1) Hours,
+  ROUND(SUM(Kills)/COUNT(DISTINCT ps.GameID),1) Kills, ROUND(SUM(Deaths)/COUNT(DISTINCT ps.GameID), 1) Deaths,
+  ROUND(SUM(Assists)/COUNT(DISTINCT ps.GameID), 1) Assists, ROUND(SUM(Airshots)/COUNT(DISTINCT ps.GameID),2) Airshots,
+  ROUND(SUM(Damage)/SUM(Playtime)*60,1) DPM, ROUND(SUM(DamageTaken)/SUM(Playtime)*60,1) DTM, ROUND(SUM(HealsReceived)/SUM(Playtime)*60,1) HRM
+FROM 
+  PlayerStats ps, Players p, Games g, ClassStats cs
+WHERE 
+  ps.SteamID=p.SteamID AND ps.GameID=g.GameID and ps.PlayerStatsID=cs.PlayerStatsID AND ClassID IN (4)
+GROUP BY ps.SteamID
+HAVING Matches > {$_ENV['MIN_MATCHES_ALL_TIME']}
+ORDER BY DPM DESC
+  ";
+  $resAll = mysqli_query($db, $q);
   ?>
+
+  <div >
+    <button class="stat-toggle" id="all-time" onclick="openTable('stats-all', 'all-time')"><i>all-time</i></button>
+    <button class="stat-toggle" id="recent" style="color:#52FFB8" onclick="openTable('stats-recent', 'recent')"><i>recent</i></button>
+  </div>
+
   <h1 style="color:#52FFB8;text-align:left"><b>demo</b></h1>
-  <?php 
-  $data->printPlayerTable($res); 
-  mysqli_close($db);
-  ?>
+
+  <div id="stats-recent" class="stats-table" style="display:block">
+    <?php $data->printPlayerTable($res); ?>
+  </div>
+
+  <div id="stats-all" class="stats-table" style="display:none">
+    <?php $data->printPlayerTable($resAll); ?>
+  </div>
+
 </div>
+
+<?php mysqli_close($db); ?>
 
 </div>
 </div>
 </body>
 </html>
+
+<script>
+function openTable(tableName, buttonName) {
+  var i;
+  var x = document.getElementsByClassName("stats-table");
+  var y = document.getElementsByClassName("stat-toggle");
+  for (i = 0; i < x.length; i++) {
+    x[i].style.display = "none";
+    x[i].style.display = "none";
+  }
+  for (i=0; i< y.length; i++) {
+    y[i].style.color ="white";
+  }
+  document.getElementById(tableName).style.display = "block";
+  document.getElementById(buttonName).style.color = "#52FFB8";
+}
+</script>
+
