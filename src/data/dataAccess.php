@@ -57,7 +57,7 @@ class dataAccess
   }
 
   public function printPlayerTable($res){
-    echo "<table style='width:80%', class='sortable'>";
+    echo "<table style='width:100%', class='sortable'>";
     echo "<tr style='color:white; text-align: left;'>";
     //Print headers.
     for($i = 0; $i < mysqli_num_fields($res); $i++)
