@@ -22,15 +22,23 @@ $db = $data->getDbCon();
 $thresh = time() - 14*24*60*60;
 $steamid = 76561198080441494;
 $q="
-SELECT
-  COUNT(ps.PlayerStatsID) AS Matches,  MaxDamage.DmgID, MaxDamage.Damage, MaxKills.GameID, MaxKills.Kills
-FROM
-  (SELECT ps.GameID, cs.Kills FROM ClassStats cs, PlayerStats ps WHERE cs.PlayerStatsID = ps.PlayerStatsID AND ClassID = 1 AND SteamID = ".$steamid." ORDER BY cs.Kills DESC LIMIT 1) AS MaxKills,
-  (SELECT ps.GameID DmgID, cs.Damage FROM ClassStats cs, PlayerStats ps WHERE cs.PlayerStatsID = ps.PlayerStatsID AND ClassID = 1 AND SteamID = ".$steamid." ORDER BY cs.Damage DESC LIMIT 1) AS MaxDamage, 
-  PlayerStats ps, ClassStats cs
-WHERE
-  cs.PlayerStatsID = ps.PlayerStatsID AND ClassID = 1 AND SteamID = ".$steamid
-;
+SELECT 
+  UNIQUE(a.EndDate) EndDate, IFNULL(p.Kills, 0) Kills, IFNULL(p.DPM, 0) DPM,
+  IFNULL(p.Headshots, 0) Headshots, IFNULL(p.Airshots, 0) Airshots
+FROM 
+  Progress a
+LEFT JOIN
+(
+  SELECT
+    EndDate, Kills, DPM, Headshots, Airshots
+  FROM
+    Progress
+  WHERE SteamID = 76561198216208760
+) AS p on p.EndDate = a.EndDate
+HAVING 
+  a.EndDate > (SELECT MIN(EndDate) FROM Progress a WHERE SteamID=76561198216208760) AND
+  a.EndDate < (SELECT MAX(EndDate) FROM Progress a WHERE SteamID=76561198216208760)
+";
 echo $q;
 $res = mysqli_query($db, $q);
 $data->printTable($res); 
